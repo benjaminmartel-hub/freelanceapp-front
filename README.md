@@ -19,15 +19,14 @@ Once the server is running, open your browser and navigate to `http://localhost:
 ```text
 src/app/
 ├── 📂 core/                # Singleton Services & App-wide config
-│   ├── 📂 auth/            # AuthService, AuthGuard, TokenInterceptor
+│   ├── 📂 auth/            # AuthService, AuthGuard
 │   ├── 📂 interceptors/    # Logging, Error Handling, JWT
 │   ├── 📂 models/          # Interfaces globales (User, APIResponse)
 │   └── 📂 services/        # ToastService, ApiService, ConfigService
 ├── 📂 shared/              # Reusable UI & Utilities
 │   ├── 📂 components/      # Loader, Button, Modal, Sidebar
 │   ├── 📂 pipes/           # CurrencyFormat, TimeAgo
-│   ├── 📂 directives/      # RoleAccess, ClickOutside
-│   └── ui-kit.module.ts    # Export de PrimeNG/Tailwind components
+│   └── 📂 directives/      # RoleAccess, ClickOutside
 ├── 📂 features/            # Lazy-loaded business modules
 │   ├── 📂 auth/            # Login, Register pages
 │   ├── 📂 dashboard/       # Vue d'ensemble, Graphiques
@@ -48,7 +47,7 @@ src/app/
 Ce dossier contient tout ce qui ne doit être instancié **qu'une seule fois**.
 
 * **`AuthService`** : Gère le login/logout et le stockage du JWT (en mémoire ou `sessionStorage`).
-* **`TokenInterceptor`** : Intercepte chaque requête sortante pour injecter le Header `Authorization: Bearer <JWT>`. C'est une exigence de sécurité majeure.
+* **`jwtInterceptor`** : Intercepte chaque requête sortante pour injecter le Header `Authorization: Bearer <JWT>`. C'est une exigence de sécurité majeure.
 * **`ToastService`** : Un service centralisé pour afficher des notifications (Succès, Erreur) via PrimeNG `MessageService`.
 
 ### B. Le Dossier `Shared/` (La Boîte à Outils)
