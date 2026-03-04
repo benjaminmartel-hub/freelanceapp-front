@@ -1,0 +1,98 @@
+:host {
+  display: block;
+}
+
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e6ecf7 100%);
+}
+
+.auth-card {
+  width: min(420px, 100%);
+  padding: 2rem;
+  border-radius: 16px;
+  background-color: #ffffff;
+  box-shadow: 0 12px 30px rgba(18, 38, 63, 0.12);
+}
+
+h1 {
+  margin: 0;
+}
+
+.subtitle {
+  margin: 0.5rem 0 1.5rem;
+  color: #4c5c73;
+}
+
+form {
+  display: grid;
+  gap: 0.65rem;
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+input {
+  width: 100%;
+  border: 1px solid #ccd5e3;
+  border-radius: 10px;
+  padding: 0.75rem;
+  font-size: 1rem;
+}
+
+button {
+  margin-top: 0.5rem;
+  border: 0;
+  border-radius: 10px;
+  padding: 0.75rem;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: #0f6bff;
+  color: #ffffff;
+}
+
+button[disabled] {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #b42318;
+}
+
+.oauth {
+  margin-top: 1.25rem;
+}
+
+.oauth p {
+  margin: 0 0 0.5rem;
+  color: #4c5c73;
+}
+
+.oauth-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.oauth-actions button {
+  margin: 0;
+  flex: 1;
+  text-transform: capitalize;
+  background-color: #eef2f8;
+  color: #1f2937;
+}
+
+.switch {
+  margin-top: 1.25rem;
+  text-align: center;
+}
+
+a {
+  color: #0f6bff;
+  text-decoration: none;
+}

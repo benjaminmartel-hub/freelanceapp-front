@@ -1,0 +1,41 @@
+<section class="auth-page">
+  <div class="auth-card">
+    <h1>Connexion</h1>
+    <p class="subtitle">Connectez-vous avec votre nom d'utilisateur et mot de passe.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <label for="username">Nom d'utilisateur</label>
+      <input id="username" type="text" formControlName="username" autocomplete="username" />
+      @if (hasError('username', 'required')) {
+      <small class="error">Le nom d'utilisateur est requis.</small>
+      }
+
+      <label for="password">Mot de passe</label>
+      <input id="password" type="password" formControlName="password" autocomplete="current-password" />
+      @if (hasError('password', 'required')) {
+      <small class="error">Le mot de passe est requis.</small>
+      }
+      @if (hasError('password', 'minlength')) {
+      <small class="error">Le mot de passe doit contenir au moins 8 caracteres.</small>
+      }
+
+      <button type="submit" [disabled]="isLoading()">
+        @if (isLoading()) { Connexion en cours... } @else { Se connecter }
+      </button>
+    </form>
+
+    <div class="oauth">
+      <p>Ou continuer avec</p>
+      <div class="oauth-actions">
+        @for (provider of oauthProviders; track provider) {
+        <button type="button" (click)="loginWithOauth(provider)">{{ provider }}</button>
+        }
+      </div>
+    </div>
+
+    <p class="switch">
+      Pas encore de compte ?
+      <a routerLink="/auth/register">Creer un compte</a>
+    </p>
+  </div>
+</section>

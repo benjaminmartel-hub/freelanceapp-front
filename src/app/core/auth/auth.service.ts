@@ -1,10 +1,32 @@
 import { Injectable, PLATFORM_ID, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { map, Observable, tap } from 'rxjs';
+import { ConfigService } from '../services/config.service';
+
+export interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+export interface RegisterRequest {
+  username: string;
+  password: string;
+}
+
+interface AuthTokenResponse {
+  token: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly http = inject(HttpClient);
+  private readonly configService = inject(ConfigService);
   private readonly tokenStorageKey = 'auth_token';
+  private readonly oauthProviders = ['google', 'github'] as const;
+  private readonly apiUrl = this.configService.apiBaseUrl;
+  private readonly authApiUrl = `${this.configService.apiBaseUrl}/auth`;
   private logoutTimeoutId: number | null = null;
   private readonly isAuthenticatedSignal = signal<boolean>(false);
 
@@ -27,6 +49,50 @@ export class AuthService {
     sessionStorage.setItem(this.tokenStorageKey, token);
     this.isAuthenticatedSignal.set(true);
     this.scheduleAutoLogout(token);
+  }
+
+  loginWithPassword(payload: LoginRequest): Observable<AuthTokenResponse> {
+    return this.http
+      .post<AuthTokenResponse | { data?: AuthTokenResponse }>(`${this.authApiUrl}/login`, payload)
+      .pipe(
+        tap((response) => {
+          const token = this.extractToken(response);
+          this.login(token);
+        }),
+        map((response) => ({
+          token: this.extractToken(response)
+        }))
+      );
+  }
+
+  registerWithPassword(payload: RegisterRequest): Observable<AuthTokenResponse> {
+    return this.http
+      .post<AuthTokenResponse | { data?: AuthTokenResponse }>(`${this.authApiUrl}/register`, payload)
+      .pipe(
+        tap((response) => {
+          const token = this.extractToken(response);
+          this.login(token);
+        }),
+        map((response) => ({
+          token: this.extractToken(response)
+        }))
+      );
+  }
+
+  getOauthProviders(): readonly string[] {
+    return this.oauthProviders;
+  }
+
+  getOauthRedirectUrl(provider: string): string {
+    return `${this.apiUrl}/oauth2/authorization/${provider}`;
+  }
+
+  loginWithOauth(provider: string): void {
+    if (!this.isBrowser()) {
+      return;
+    }
+
+    window.location.href = this.getOauthRedirectUrl(provider);
   }
 
   logout(): void {
@@ -55,6 +121,15 @@ export class AuthService {
     }
 
     return token;
+  }
+
+  tryLoginFromCallback(token: string | null): boolean {
+    if (!token) {
+      return false;
+    }
+
+    this.login(token);
+    return this.isAuthenticated();
   }
 
   // Garde SSR (Angular Universal / pre-render / tests Node)
@@ -139,5 +214,17 @@ export class AuthService {
     } catch {
       return null;
     }
+  }
+
+  private extractToken(response: AuthTokenResponse | { data?: AuthTokenResponse }): string {
+    if ('token' in response && typeof response.token === 'string') {
+      return response.token;
+    }
+
+    if ('data' in response && response.data && typeof response.data.token === 'string') {
+      return response.data.token;
+    }
+
+    throw new Error('Token JWT introuvable dans la reponse backend.');
   }
 }
