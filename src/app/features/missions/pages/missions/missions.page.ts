@@ -1,7 +1,13 @@
 import { Component } from '@angular/core';
+import { CardModule } from 'primeng/card';
 
 @Component({
   selector: 'app-missions-page',
-  template: '<h1>Missions</h1><p>Gestion CRUD des missions.</p>'
+  imports: [CardModule],
+  template: `
+    <p-card header="Missions" subheader="Gestion des missions">
+      <p>Creez, mettez a jour et suivez vos missions depuis cette page.</p>
+    </p-card>
+  `
 })
 export class MissionsPageComponent {}

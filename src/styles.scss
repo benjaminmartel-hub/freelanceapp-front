@@ -1,1 +1,57 @@
 /* You can add global styles to this file, and also import other style files */
+@import 'primeicons/primeicons.css';
+
+:root {
+  --app-bg: #0b1220;
+  --app-bg-soft: #111a2b;
+  --app-surface: #162235;
+  --app-surface-elevated: #1b2a40;
+  --app-border: #2b3a53;
+  --app-text: #e6edf7;
+  --app-text-muted: #9fb1c9;
+  --app-primary: #7cb3ff;
+  --app-danger: #ff8d8d;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(170deg, var(--app-bg) 0%, #101a2c 60%, #0f1727 100%);
+  color: var(--app-text);
+}
+
+a {
+  color: var(--app-primary);
+}
+
+/* PrimeNG global dark coherence */
+.p-card {
+  background: linear-gradient(180deg, var(--app-surface-elevated) 0%, var(--app-surface) 100%);
+  border: 1px solid var(--app-border);
+  color: var(--app-text);
+}
+
+.p-card .p-card-subtitle {
+  color: var(--app-text-muted);
+}
+
+.p-inputtext,
+.p-password-input {
+  background: #0f1a2b;
+  border-color: var(--app-border);
+  color: var(--app-text);
+}
+
+.p-inputtext::placeholder,
+.p-password-input::placeholder {
+  color: #7f92ab;
+}
+
+.p-divider .p-divider-content {
+  background: transparent;
+  color: var(--app-text-muted);
+}

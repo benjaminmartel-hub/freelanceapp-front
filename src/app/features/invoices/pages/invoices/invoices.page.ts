@@ -1,7 +1,13 @@
 import { Component } from '@angular/core';
+import { CardModule } from 'primeng/card';
 
 @Component({
   selector: 'app-invoices-page',
-  template: '<h1>Invoices</h1><p>Generation et liste des factures.</p>'
+  imports: [CardModule],
+  template: `
+    <p-card header="Invoices" subheader="Facturation">
+      <p>Generez et consultez vos factures dans une interface unifiee.</p>
+    </p-card>
+  `
 })
 export class InvoicesPageComponent {}

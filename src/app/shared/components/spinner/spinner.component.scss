@@ -2,19 +2,10 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  color: var(--app-text-muted);
 }
 
-.spinner-ring {
-  width: 1rem;
-  height: 1rem;
-  border: 2px solid #d1d5db;
-  border-top-color: #111827;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+:host ::ng-deep .p-progressspinner {
+  width: 1.1rem;
+  height: 1.1rem;
 }

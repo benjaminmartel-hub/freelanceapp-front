@@ -1,17 +1,24 @@
 <section class="auth-page">
-  <div class="auth-card">
-    <h1>Inscription</h1>
-    <p class="subtitle">Creer un compte avec nom d'utilisateur et mot de passe.</p>
-
+  <p-card
+    styleClass="auth-card"
+    header="Inscription"
+    subheader="Creer un compte avec nom d'utilisateur et mot de passe.">
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
       <label for="username">Nom d'utilisateur</label>
-      <input id="username" type="text" formControlName="username" autocomplete="username" />
+      <input pInputText id="username" type="text" formControlName="username" autocomplete="username" />
       @if (hasError('username', 'required')) {
       <small class="error">Le nom d'utilisateur est requis.</small>
       }
 
       <label for="password">Mot de passe</label>
-      <input id="password" type="password" formControlName="password" autocomplete="new-password" />
+      <p-password
+        inputId="password"
+        formControlName="password"
+        [feedback]="true"
+        [toggleMask]="true"
+        autocomplete="new-password"
+        styleClass="w-full"
+        inputStyleClass="w-full"></p-password>
       @if (hasError('password', 'required')) {
       <small class="error">Le mot de passe est requis.</small>
       }
@@ -20,7 +27,14 @@
       }
 
       <label for="confirmPassword">Confirmer le mot de passe</label>
-      <input id="confirmPassword" type="password" formControlName="confirmPassword" autocomplete="new-password" />
+      <p-password
+        inputId="confirmPassword"
+        formControlName="confirmPassword"
+        [feedback]="false"
+        [toggleMask]="true"
+        autocomplete="new-password"
+        styleClass="w-full"
+        inputStyleClass="w-full"></p-password>
       @if (hasError('confirmPassword', 'required')) {
       <small class="error">La confirmation du mot de passe est requise.</small>
       }
@@ -28,16 +42,27 @@
       <small class="error">Les mots de passe ne correspondent pas.</small>
       }
 
-      <button type="submit" [disabled]="isLoading()">
-        @if (isLoading()) { Inscription en cours... } @else { Creer un compte }
-      </button>
+      <p-button
+        type="submit"
+        [disabled]="isLoading()"
+        [loading]="isLoading()"
+        label="Creer un compte"
+        styleClass="w-full"></p-button>
     </form>
 
+    <p-divider align="center" type="solid">Ou continuer avec</p-divider>
+
     <div class="oauth">
-      <p>Ou continuer avec</p>
       <div class="oauth-actions">
         @for (provider of oauthProviders; track provider) {
-        <button type="button" (click)="registerWithOauth(provider)">{{ provider }}</button>
+        <button
+          pButton
+          type="button"
+          class="oauth-provider-button p-button-outlined p-button-secondary"
+          (click)="registerWithOauth(provider)">
+          <i [class]="'pi pi-' + provider" pButtonIcon></i>
+          <span pButtonLabel>{{ provider | titlecase }}</span>
+        </button>
         }
       </div>
     </div>
@@ -46,5 +71,5 @@
       Deja un compte ?
       <a routerLink="/auth/login">Se connecter</a>
     </p>
-  </div>
+  </p-card>
 </section>

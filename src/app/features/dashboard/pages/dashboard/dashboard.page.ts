@@ -1,7 +1,13 @@
 import { Component } from '@angular/core';
+import { CardModule } from 'primeng/card';
 
 @Component({
   selector: 'app-dashboard-page',
-  template: '<h1>Dashboard</h1><p>Vue d\'ensemble.</p>'
+  imports: [CardModule],
+  template: `
+    <p-card header="Dashboard" subheader="Vue d'ensemble">
+      <p>Retrouvez ici les indicateurs de votre activite.</p>
+    </p-card>
+  `
 })
 export class DashboardPageComponent {}

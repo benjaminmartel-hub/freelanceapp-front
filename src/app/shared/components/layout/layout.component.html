@@ -1,9 +1,16 @@
 <header class="layout-header">
   <nav class="layout-nav">
-    <a routerLink="/dashboard">Dashboard</a>
-    <a routerLink="/missions">Missions</a>
-    <a routerLink="/invoices">Invoices</a>
-    <button type="button" class="logout-button" (click)="logout()">Deconnexion</button>
+    <a pButton routerLink="/dashboard" severity="secondary" variant="text">Dashboard</a>
+    <a pButton routerLink="/missions" severity="secondary" variant="text">Missions</a>
+    <a pButton routerLink="/invoices" severity="secondary" variant="text">Invoices</a>
+    <p-button
+      type="button"
+      class="logout-button"
+      icon="pi pi-sign-out"
+      label="Deconnexion"
+      severity="danger"
+      variant="outlined"
+      (onClick)="logout()"></p-button>
   </nav>
 </header>
 
