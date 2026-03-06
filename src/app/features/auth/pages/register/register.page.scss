@@ -1,0 +1,104 @@
+:host {
+  display: block;
+}
+
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: radial-gradient(circle at top left, rgba(89, 134, 202, 0.35) 0, transparent 35%),
+    radial-gradient(circle at bottom right, rgba(69, 157, 134, 0.2) 0, transparent 40%), linear-gradient(155deg, #0c1322 0%, #111b2e 100%);
+}
+
+:host ::ng-deep .auth-card {
+  width: min(420px, 100%);
+}
+
+:host ::ng-deep .auth-card .p-card-title {
+  color: var(--app-text);
+}
+
+:host ::ng-deep .auth-card .p-card-subtitle {
+  color: var(--app-text-muted);
+}
+
+:host ::ng-deep .auth-card .p-card-content {
+  padding-top: 0.5rem;
+}
+
+form {
+  display: grid;
+  gap: 0.5rem;
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--app-text);
+}
+
+:host ::ng-deep .p-inputtext,
+:host ::ng-deep .p-password,
+:host ::ng-deep .p-password-input {
+  width: 100%;
+}
+
+.error {
+  color: var(--app-danger);
+}
+
+.oauth {
+  margin-top: 0.25rem;
+}
+
+.oauth-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.5rem;
+}
+
+:host ::ng-deep .oauth-actions .p-button {
+  width: 100%;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  text-transform: none;
+}
+
+.switch {
+  margin: 1.25rem 0 0;
+  text-align: center;
+  color: var(--app-text-muted);
+}
+
+a {
+  color: var(--p-primary-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+:host ::ng-deep .p-divider-content {
+  font-size: 0.85rem;
+  color: var(--app-text-muted);
+}
+
+:host ::ng-deep .w-full {
+  width: 100%;
+}
+
+@media (max-width: 480px) {
+  .auth-page {
+    padding: 0.75rem;
+  }
+
+  :host ::ng-deep .auth-card .p-card-body {
+    padding: 1rem;
+  }
+
+  .oauth-actions {
+    grid-template-columns: 1fr;
+  }
+}
