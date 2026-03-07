@@ -1,0 +1,7 @@
+:host {
+  pointer-events: none;
+}
+
+:host ::ng-deep .p-toast {
+  pointer-events: auto;
+}

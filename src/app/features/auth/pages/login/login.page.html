@@ -1,0 +1,59 @@
+<section class="auth-page">
+  <p-card
+    styleClass="auth-card"
+    header="Connexion"
+    subheader="Connectez-vous avec votre nom d'utilisateur et mot de passe.">
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <label for="username">Nom d'utilisateur</label>
+      <input pInputText id="username" type="text" formControlName="username" autocomplete="username" />
+      @if (hasError('username', 'required')) {
+      <small class="error">Le nom d'utilisateur est requis.</small>
+      }
+
+      <label for="password">Mot de passe</label>
+      <p-password
+        inputId="password"
+        formControlName="password"
+        [feedback]="false"
+        [toggleMask]="true"
+        autocomplete="current-password"
+        styleClass="w-full"
+        inputStyleClass="w-full"></p-password>
+      @if (hasError('password', 'required')) {
+      <small class="error">Le mot de passe est requis.</small>
+      }
+      @if (hasError('password', 'minlength')) {
+      <small class="error">Le mot de passe doit contenir au moins 8 caracteres.</small>
+      }
+
+      <p-button
+        type="submit"
+        [disabled]="isLoading()"
+        [loading]="isLoading()"
+        label="Se connecter"
+        styleClass="w-full"></p-button>
+    </form>
+
+    <p-divider align="center" type="solid">Ou continuer avec</p-divider>
+
+    <div class="oauth">
+      <div class="oauth-actions">
+        @for (provider of oauthProviders; track provider) {
+        <button
+          pButton
+          type="button"
+          class="oauth-provider-button p-button-outlined p-button-secondary"
+          (click)="loginWithOauth(provider)">
+          <i [class]="'pi pi-' + provider" pButtonIcon></i>
+          <span pButtonLabel>{{ provider | titlecase }}</span>
+        </button>
+        }
+      </div>
+    </div>
+
+    <p class="switch">
+      Pas encore de compte ?
+      <a routerLink="/auth/register">Creer un compte</a>
+    </p>
+  </p-card>
+</section>
