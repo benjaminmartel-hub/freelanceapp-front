@@ -1,0 +1,54 @@
+<p-card class="action-table">
+  <ng-template pTemplate="header">
+    <div class="action-table__header">
+      <span>{{ title() }}</span>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="content">
+    <p-table *ngIf="type() === 'overdue-invoices'" [value]="overdueRows()" [tableStyle]="{ 'min-width': '100%' }">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Client</th>
+          <th>Montant</th>
+          <th>Retard</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>{{ row.clientName }}</td>
+          <td>{{ formatCurrency(row.amount) }}</td>
+          <td>
+            <p-tag severity="danger" [value]="row.daysOverdue + ' jours de retard'"></p-tag>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <div class="action-table__empty">Aucun element critique pour le moment.</div>
+      </ng-template>
+    </p-table>
+
+    <p-table *ngIf="type() === 'expiring-missions'" [value]="expiringRows()" [tableStyle]="{ 'min-width': '100%' }">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Mission</th>
+          <th>Client</th>
+          <th>Fin</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>{{ row.title }}</td>
+          <td>{{ row.clientName }}</td>
+          <td>{{ formatDate(row.endDate) }}</td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <div class="action-table__empty">Aucun element critique pour le moment.</div>
+      </ng-template>
+    </p-table>
+  </ng-template>
+</p-card>

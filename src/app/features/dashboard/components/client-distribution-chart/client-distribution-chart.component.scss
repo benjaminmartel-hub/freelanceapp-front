@@ -1,0 +1,19 @@
+.client-chart {
+  position: relative;
+  height: 260px;
+  overflow: hidden;
+}
+
+.client-chart__hint {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--app-text-muted);
+}
+
+:host ::ng-deep .client-chart .p-chart {
+  height: 100%;
+}
+
+:host ::ng-deep .client-chart canvas {
+  max-height: 100% !important;
+}

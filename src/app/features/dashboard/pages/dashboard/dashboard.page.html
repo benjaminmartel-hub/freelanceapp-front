@@ -1,0 +1,100 @@
+<section class="dashboard">
+  <p-card header="Dashboard" subheader="Vue d'ensemble"></p-card>
+
+  <p-message *ngIf="error() as errorMessage" severity="error" [text]="errorMessage"></p-message>
+
+  <ng-container *ngIf="!error()">
+    <ng-container *ngIf="dashboardData$ | async as data; else loadingState">
+      <div class="kpi-grid">
+        <app-kpi-card
+          title="CA mensuel"
+          icon="pi pi-wallet"
+          [value]="formatCurrency(data.monthlyTurnover)"></app-kpi-card>
+        <app-kpi-card
+          title="CA annuel"
+          icon="pi pi-chart-line"
+          [value]="formatCurrency(data.annualTurnover)"
+          [progress]="annualProgress(data.annualTurnover)"
+          [progressLabel]="annualProgressLabel(data.annualTurnover)"></app-kpi-card>
+        <app-kpi-card
+          title="Encours a percevoir"
+          icon="pi pi-clock"
+          [value]="formatCurrency(data.pendingPayments)"></app-kpi-card>
+        <app-kpi-card
+          title="Prochaine echeance fiscale"
+          icon="pi pi-calendar"
+          [value]="formatCurrency(data.nextTaxDeadline.amountToPay)"
+          [subtitle]="data.nextTaxDeadline.label + ' - ' + formatDate(data.nextTaxDeadline.deadline)"></app-kpi-card>
+      </div>
+
+      <div class="charts-grid">
+        <p-card header="Evolution du Chiffre d'Affaires">
+          <app-revenue-chart [data]="data.revenueHistory"></app-revenue-chart>
+        </p-card>
+        <p-card header="Repartition par Client">
+          <app-client-distribution-chart [data]="data.clientDistribution"></app-client-distribution-chart>
+        </p-card>
+      </div>
+
+      <div class="actions-grid">
+        <app-action-table title="Factures en retard" type="overdue-invoices" [rows]="data.overdueInvoices"></app-action-table>
+        <app-action-table title="Contrats a renouveler" type="expiring-missions" [rows]="data.expiringMissions"></app-action-table>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #loadingState>
+    <div class="kpi-grid">
+      <p-card>
+        <ng-template pTemplate="content">
+          <p-skeleton width="40%" height="1rem"></p-skeleton>
+          <p-skeleton width="70%" height="2rem" style="margin-top: 0.5rem"></p-skeleton>
+        </ng-template>
+      </p-card>
+      <p-card>
+        <ng-template pTemplate="content">
+          <p-skeleton width="50%" height="1rem"></p-skeleton>
+          <p-skeleton width="80%" height="2rem" style="margin-top: 0.5rem"></p-skeleton>
+        </ng-template>
+      </p-card>
+      <p-card>
+        <ng-template pTemplate="content">
+          <p-skeleton width="45%" height="1rem"></p-skeleton>
+          <p-skeleton width="60%" height="2rem" style="margin-top: 0.5rem"></p-skeleton>
+        </ng-template>
+      </p-card>
+      <p-card>
+        <ng-template pTemplate="content">
+          <p-skeleton width="55%" height="1rem"></p-skeleton>
+          <p-skeleton width="70%" height="2rem" style="margin-top: 0.5rem"></p-skeleton>
+        </ng-template>
+      </p-card>
+    </div>
+
+    <div class="charts-grid">
+      <p-card>
+        <ng-template pTemplate="content">
+          <p-skeleton width="100%" height="280px"></p-skeleton>
+        </ng-template>
+      </p-card>
+      <p-card>
+        <ng-template pTemplate="content">
+          <p-skeleton width="100%" height="280px"></p-skeleton>
+        </ng-template>
+      </p-card>
+    </div>
+
+    <div class="actions-grid">
+      <p-card>
+        <ng-template pTemplate="content">
+          <p-skeleton width="100%" height="200px"></p-skeleton>
+        </ng-template>
+      </p-card>
+      <p-card>
+        <ng-template pTemplate="content">
+          <p-skeleton width="100%" height="200px"></p-skeleton>
+        </ng-template>
+      </p-card>
+    </div>
+  </ng-template>
+</section>
