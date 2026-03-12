@@ -65,6 +65,15 @@ export class LoginPageComponent {
     this.authService.loginWithOauth(provider);
   }
 
+  protected loginWithDemo(): void {
+    if (this.isLoading()) {
+      return;
+    }
+
+    this.form.setValue({ username: 'demo', password: 'demo1234' });
+    this.submit();
+  }
+
   protected hasError(controlName: 'username' | 'password', errorCode: string): boolean {
     const control = this.form.controls[controlName];
     return control.touched && control.hasError(errorCode);

@@ -1,6 +1,6 @@
 {
   "name": "freelanceapp-front",
-  "version": "0.1.0-SNAPSHOT",
+  "version": "0.2.0-SNAPSHOT",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -26,6 +26,7 @@
     "express": "^5.1.0",
     "primeicons": "^7.0.0",
     "primeng": "^21.1.3",
+    "chart.js": "^4.4.8",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

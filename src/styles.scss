@@ -20,7 +20,9 @@ body {
 
 body {
   margin: 0;
-  background: linear-gradient(170deg, var(--app-bg) 0%, #101a2c 60%, #0f1727 100%);
+  background: radial-gradient(circle at top left, rgba(89, 134, 202, 0.28) 0, transparent 40%),
+    radial-gradient(circle at bottom right, rgba(69, 157, 134, 0.18) 0, transparent 45%),
+    linear-gradient(160deg, #0c1322 0%, #111b2e 100%);
   color: var(--app-text);
 }
 
@@ -30,8 +32,10 @@ a {
 
 /* PrimeNG global dark coherence */
 .p-card {
-  background: linear-gradient(180deg, var(--app-surface-elevated) 0%, var(--app-surface) 100%);
-  border: 1px solid var(--app-border);
+  background: rgba(24, 34, 54, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 14px 32px rgba(5, 12, 25, 0.28);
+  backdrop-filter: blur(10px);
   color: var(--app-text);
 }
 

@@ -36,6 +36,16 @@
 
     <p-divider align="center" type="solid">Ou continuer avec</p-divider>
 
+    <div class="demo-button">
+      <p-button
+        type="button"
+        [disabled]="isLoading()"
+        [loading]="isLoading()"
+        label="Connexion utilisateur demo"
+        styleClass="w-full p-button-outlined"
+        (onClick)="loginWithDemo()"></p-button>
+    </div>
+
     <div class="oauth">
       <div class="oauth-actions">
         @for (provider of oauthProviders; track provider) {

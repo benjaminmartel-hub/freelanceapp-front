@@ -1,19 +1,26 @@
 <header class="layout-header">
-  <nav class="layout-nav">
-    <a pButton routerLink="/dashboard" severity="secondary" variant="text">Dashboard</a>
-    <a pButton routerLink="/missions" severity="secondary" variant="text">Missions</a>
-    <a pButton routerLink="/invoices" severity="secondary" variant="text">Invoices</a>
-    <p-button
-      type="button"
-      class="logout-button"
-      icon="pi pi-sign-out"
-      label="Deconnexion"
-      severity="danger"
-      variant="outlined"
-      (onClick)="logout()"></p-button>
-  </nav>
+  <p-menubar [model]="menuItems" styleClass="layout-menubar">
+    <ng-template pTemplate="start">
+      <div class="app-brand">
+        <div class="app-brand__logo" aria-hidden="true">FA</div>
+        <div class="app-brand__name">FreelanceApp</div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="end">
+      <p-button
+        type="button"
+        class="logout-button"
+        icon="pi pi-sign-out"
+        label="Deconnexion"
+        severity="danger"
+        variant="outlined"
+        (onClick)="logout()"></p-button>
+    </ng-template>
+  </p-menubar>
 </header>
 
 <main class="layout-content">
-  <router-outlet></router-outlet>
+  <div class="layout-content__inner">
+    <router-outlet></router-outlet>
+  </div>
 </main>
