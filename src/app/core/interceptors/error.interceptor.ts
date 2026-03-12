@@ -9,7 +9,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((error: unknown) => {
       if (error instanceof HttpErrorResponse) {
-        toastService.error(resolveHttpErrorMessage(error));
+        toastService.error(resolveHttpErrorMessage(error, req.url));
       } else {
         toastService.error('Une erreur inattendue est survenue.');
       }
@@ -19,7 +19,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   );
 };
 
-function resolveHttpErrorMessage(error: HttpErrorResponse): string {
+function resolveHttpErrorMessage(error: HttpErrorResponse, requestUrl: string): string {
   const payloadMessage = extractMessageFromPayload(error.error);
 
   if (payloadMessage) {
@@ -27,7 +27,11 @@ function resolveHttpErrorMessage(error: HttpErrorResponse): string {
   }
 
   if (error.status === 401) {
-    return "Nom d'utilisateur ou mot de passe invalide.";
+    if (isAuthRequest(requestUrl)) {
+      return "Nom d'utilisateur ou mot de passe invalide.";
+    }
+
+    return 'Session expiree ou non autorisee. Veuillez vous reconnecter.';
   }
 
   if (error.status === 403) {
@@ -41,7 +45,7 @@ function resolveHttpErrorMessage(error: HttpErrorResponse): string {
   // Angular signale ce cas quand il attend du JSON mais recoit HTML/texte.
   // Typiquement, un backend qui redirige vers /login (page HTML) au lieu de renvoyer une erreur API JSON.
   if (error.status === 200 && error.message.includes('Http failure during parsing')) {
-    if (isAuthRequest(error.url)) {
+    if (isAuthRequest(requestUrl)) {
       return "Echec de connexion: nom d'utilisateur ou mot de passe invalide.";
     }
 

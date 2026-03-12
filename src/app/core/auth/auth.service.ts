@@ -123,6 +123,21 @@ export class AuthService {
     return token;
   }
 
+  getUserIdFromToken(): string | null {
+    const token = this.getToken();
+    if (!token) {
+      return null;
+    }
+
+    const payload = this.decodeJwtPayload(token);
+    if (!payload) {
+      return null;
+    }
+
+    const candidate = payload['userId'] ?? payload['id'] ?? payload['sub'];
+    return typeof candidate === 'string' ? candidate : null;
+  }
+
   tryLoginFromCallback(token: string | null): boolean {
     if (!token) {
       return false;

@@ -1,41 +1,115 @@
 .layout-header {
-  padding: 1rem;
-  border-bottom: 1px solid var(--app-border);
-  background: linear-gradient(180deg, #1b273d 0%, #162338 100%);
-  box-shadow: 0 8px 20px rgba(2, 8, 20, 0.35);
-}
-
-.layout-nav {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(18, 26, 42, 0.55);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 26px rgba(2, 8, 20, 0.35);
 }
 
 .logout-button {
-  margin-left: auto;
+  margin-left: 0.75rem;
+}
+
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-right: 0.75rem;
+  color: var(--app-text);
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.app-brand__logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0d1424;
+  background: linear-gradient(135deg, #7cb3ff 0%, #5fdfb0 100%);
+  box-shadow: 0 8px 18px rgba(6, 15, 30, 0.35);
+}
+
+.app-brand__name {
+  font-size: 1rem;
 }
 
 .layout-content {
-  padding: 1rem;
+  position: relative;
+  padding: 1.5rem 1.5rem 2rem;
   min-height: calc(100vh - 80px);
+  background: linear-gradient(180deg, rgba(8, 14, 26, 0.35) 0%, rgba(8, 14, 26, 0.12) 100%);
 }
 
-:host ::ng-deep .layout-nav .p-button {
+.layout-content::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(124, 179, 255, 0.08), transparent 40%);
+  pointer-events: none;
+}
+
+.layout-content__inner {
+  position: relative;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+:host ::ng-deep .layout-menubar {
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(17, 24, 40, 0.4);
+  backdrop-filter: blur(12px);
+  border-radius: 14px;
+  padding: 0.35rem 0.75rem;
+}
+
+:host ::ng-deep .layout-menubar .p-menubar-root-list {
+  gap: 0.25rem;
+}
+
+:host ::ng-deep .layout-menubar .p-menuitem-link {
+  border-radius: 10px;
   color: var(--app-text);
 }
 
-:host ::ng-deep .layout-nav .p-button:not(.p-button-danger):hover {
-  background: rgba(124, 179, 255, 0.14);
+:host ::ng-deep .layout-menubar .p-menuitem-link:hover {
+  background: rgba(124, 179, 255, 0.16);
+}
+
+:host ::ng-deep .layout-menubar .p-menuitem-link.p-menuitem-link-active {
+  background: rgba(124, 179, 255, 0.22);
+}
+
+:host ::ng-deep .layout-menubar .p-menuitem-icon,
+:host ::ng-deep .layout-menubar .p-menuitem-text {
+  color: inherit;
 }
 
 @media (max-width: 640px) {
-  .layout-nav {
-    gap: 0.5rem;
+  .layout-content {
+    padding: 1rem 1rem 1.5rem;
   }
 
   .logout-button {
-    margin-left: 0;
     width: 100%;
+  }
+}
+
+@media (max-width: 540px) {
+  .app-brand__name {
+    display: none;
+  }
+
+  :host ::ng-deep .logout-button .p-button-label {
+    display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  :host ::ng-deep .layout-menubar .p-menubar-root-list {
+    display: none;
   }
 }

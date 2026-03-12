@@ -1,0 +1,31 @@
+:host ::ng-deep .action-table .p-card-body {
+  padding: 0;
+}
+
+:host ::ng-deep .action-table .p-card-header {
+  padding: 1rem 1rem 0.75rem;
+}
+
+.action-table__header {
+  font-weight: 600;
+}
+
+:host ::ng-deep .action-table .p-datatable {
+  background: transparent;
+}
+
+:host ::ng-deep .action-table .p-datatable-thead > tr > th {
+  background: rgba(15, 26, 43, 0.6);
+  color: var(--app-text-muted);
+  border-color: var(--app-border);
+}
+
+:host ::ng-deep .action-table .p-datatable-tbody > tr > td {
+  border-color: var(--app-border);
+}
+
+.action-table__empty {
+  padding: 1rem;
+  text-align: center;
+  color: var(--app-text-muted);
+}

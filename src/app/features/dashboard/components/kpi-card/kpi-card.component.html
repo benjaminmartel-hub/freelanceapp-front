@@ -1,0 +1,18 @@
+<p-card class="kpi-card">
+  <ng-template pTemplate="content">
+    <div class="kpi-card__content">
+      <div class="kpi-card__icon" *ngIf="icon()">
+        <i [class]="icon()"></i>
+      </div>
+      <div class="kpi-card__meta">
+        <div class="kpi-card__title">{{ title() }}</div>
+        <div class="kpi-card__value">{{ value() }}</div>
+        <div class="kpi-card__subtitle" *ngIf="subtitle()">{{ subtitle() }}</div>
+        <div class="kpi-card__progress" *ngIf="showProgress()">
+          <p-progressBar [value]="progress()!" [showValue]="false"></p-progressBar>
+          <div class="kpi-card__progress-label" *ngIf="progressLabel()">{{ progressLabel() }}</div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</p-card>

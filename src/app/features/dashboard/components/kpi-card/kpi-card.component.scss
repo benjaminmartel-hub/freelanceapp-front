@@ -1,0 +1,56 @@
+.kpi-card {
+  height: 100%;
+}
+
+.kpi-card__content {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.kpi-card__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(124, 179, 255, 0.15);
+  color: var(--app-primary);
+  font-size: 1.4rem;
+}
+
+.kpi-card__meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.kpi-card__title {
+  font-size: 0.9rem;
+  color: var(--app-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.kpi-card__value {
+  font-size: 1.65rem;
+  font-weight: 600;
+}
+
+.kpi-card__subtitle {
+  font-size: 0.85rem;
+  color: var(--app-text-muted);
+}
+
+.kpi-card__progress {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.kpi-card__progress-label {
+  font-size: 0.75rem;
+  color: var(--app-text-muted);
+}
