@@ -1,0 +1,22 @@
+<div class="mission-filters" [formGroup]="form">
+  <div class="mission-filters__field">
+    <label for="missionSearch">Client</label>
+    <input
+      id="missionSearch"
+      pInputText
+      formControlName="searchTerm"
+      placeholder="Rechercher par client"
+    />
+  </div>
+
+  <div class="mission-filters__field">
+    <label for="statusFilter">Statut</label>
+    <p-select
+      id="statusFilter"
+      [options]="statusOptions()"
+      optionLabel="label"
+      optionValue="value"
+      formControlName="status"
+    ></p-select>
+  </div>
+</div>

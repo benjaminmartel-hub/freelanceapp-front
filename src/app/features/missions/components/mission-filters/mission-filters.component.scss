@@ -1,0 +1,12 @@
+.mission-filters {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  align-items: end;
+}
+
+.mission-filters__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}

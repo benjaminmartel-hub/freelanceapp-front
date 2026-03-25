@@ -1,0 +1,45 @@
+.missions-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.missions-page__header,
+.missions-page__panel {
+  border-radius: 1rem;
+}
+
+:host ::ng-deep .missions-page__panel .p-card-body {
+  padding: 1.25rem;
+}
+
+:host ::ng-deep .missions-page__header .p-card-header {
+  padding: 1.25rem;
+}
+
+:host ::ng-deep .missions-page__header .p-card-body {
+  padding: 0;
+}
+
+.missions-page__header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.missions-page__title h2 {
+  margin: 0;
+}
+
+.missions-page__title p {
+  margin: 0.25rem 0 0;
+  color: var(--text-color-secondary);
+}
+
+.missions-page__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}

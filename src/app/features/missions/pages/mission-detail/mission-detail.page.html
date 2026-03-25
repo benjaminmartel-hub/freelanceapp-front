@@ -1,0 +1,73 @@
+<div class="mission-detail">
+  <a class="mission-detail__back" routerLink="/missions">
+    <i class="pi pi-arrow-left"></i>
+    Retour aux missions
+  </a>
+
+  <p-message *ngIf="error() as errorText" severity="error" [text]="errorText"></p-message>
+
+  <div *ngIf="isLoading()" class="mission-detail__loading">
+    <p-skeleton height="2rem"></p-skeleton>
+    <p-skeleton height="12rem"></p-skeleton>
+  </div>
+
+  <ng-container *ngIf="!isLoading() && mission() as mission">
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="mission-detail__header">
+          <div>
+            <h2>{{ mission.title }}</h2>
+            <p>{{ mission.clientName }}</p>
+          </div>
+          <p-tag [value]="statusLabel(mission)" [severity]="statusSeverity(mission)"></p-tag>
+        </div>
+      </ng-template>
+
+      <div class="mission-detail__grid">
+        <div>
+          <span>Debut</span>
+          <strong>{{ formatDate(mission.startDate) }}</strong>
+        </div>
+        <div>
+          <span>Fin</span>
+          <strong>{{ formatDate(mission.endDate) }}</strong>
+        </div>
+        <div>
+          <span>TJM</span>
+          <strong>{{ mission.dailyRate | number: '1.0-0' }} €</strong>
+        </div>
+        <div>
+          <span>Duree prevue</span>
+          <strong>{{ mission.expectedDuration ?? '-' }} j</strong>
+        </div>
+        <div>
+          <span>Budget estime</span>
+          <strong>{{ totalBudgetEstimated() | number: '1.0-0' }} €</strong>
+        </div>
+      </div>
+
+      <p *ngIf="mission.internalNotes" class="mission-detail__description">{{ mission.internalNotes }}</p>
+    </p-card>
+
+    <div class="mission-detail__kpis">
+      <p-card>
+        <ng-template pTemplate="header">
+          <h3>Progression temporelle</h3>
+        </ng-template>
+        <p-progressBar [value]="timeProgress()"></p-progressBar>
+        <p class="mission-detail__kpi-label">{{ timeProgress() }}% du temps ecoule</p>
+      </p-card>
+
+      <p-card>
+        <ng-template pTemplate="header">
+          <h3>Burn-rate financier</h3>
+        </ng-template>
+        <p-progressBar [value]="burnRateProgress()"></p-progressBar>
+        <p class="mission-detail__kpi-label">
+          {{ totalInvoicedAmount() | number: '1.0-0' }} € sur
+          {{ totalBudgetEstimated() | number: '1.0-0' }} €
+        </p>
+      </p-card>
+    </div>
+  </ng-container>
+</div>
