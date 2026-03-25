@@ -9,6 +9,7 @@ import { catchError, finalize, of } from 'rxjs';
 import { Mission } from '../../../../core/models/mission.model';
 import { MissionService } from '../../../../core/services/mission.service';
 import { ToastService } from '../../../../core/services/toast.service';
+import { ClickOutsideDirective } from '../../../../shared/directives/click-outside.directive';
 import { MissionFormComponent } from '../../components/mission-form/mission-form.component';
 import { MissionListComponent } from '../../components/mission-list/mission-list.component';
 
@@ -22,6 +23,7 @@ type MissionRequest = Parameters<MissionService['createMission']>[0];
     ButtonModule,
     DialogModule,
     MessageModule,
+    ClickOutsideDirective,
     MissionListComponent,
     MissionFormComponent
   ],
@@ -39,6 +41,7 @@ export class MissionFeatureComponent {
   protected readonly dialogVisible = signal(false);
   protected readonly editingMission = signal<Mission | null>(null);
   protected readonly isSaving = signal(false);
+  protected readonly clickOutsideEnabled = signal(false);
 
   private buildMissionRequest(payload: Mission): MissionRequest | null {
     if (!payload.startDate || !payload.endDate) {
@@ -88,11 +91,15 @@ export class MissionFeatureComponent {
   protected openCreateDialog(): void {
     this.editingMission.set(null);
     this.dialogVisible.set(true);
+    this.clickOutsideEnabled.set(false);
+    setTimeout(() => this.clickOutsideEnabled.set(true));
   }
 
   protected openEditDialog(mission: Mission): void {
     this.dialogVisible.set(true);
     this.editingMission.set(null);
+    this.clickOutsideEnabled.set(false);
+    setTimeout(() => this.clickOutsideEnabled.set(true));
     if (mission.id == null) {
       this.toastService.error("Identifiant mission manquant pour la mise a jour.");
       return;
@@ -116,6 +123,7 @@ export class MissionFeatureComponent {
   protected closeDialog(): void {
     this.dialogVisible.set(false);
     this.editingMission.set(null);
+    this.clickOutsideEnabled.set(false);
   }
 
   protected saveMission(payload: Mission): void {

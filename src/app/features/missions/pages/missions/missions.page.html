@@ -24,6 +24,10 @@
 </div>
 
 <p-dialog
+  styleClass="mission-dialog"
+  appClickOutside
+  [appClickOutsideEnabled]="clickOutsideEnabled()"
+  [appClickOutsideInsideSelector]="'.mission-dialog'"
   [visible]="dialogVisible()"
   [modal]="true"
   [draggable]="false"
