@@ -10,6 +10,8 @@ export function getMissionStatusSeverity(status: MissionStatus): MissionStatusSe
       return 'warn';
     case 'FINISHED':
       return 'danger';
+    case 'CANCELLED':
+      return 'danger';
     default:
       return undefined;
   }
@@ -23,6 +25,8 @@ export function getMissionStatusLabel(status: MissionStatus): string {
       return 'Prospect';
     case 'FINISHED':
       return 'Terminee';
+    case 'CANCELLED':
+      return 'Annulee';
     default:
       return status;
   }

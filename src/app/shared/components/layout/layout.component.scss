@@ -1,4 +1,6 @@
 .layout-header {
+  position: relative;
+  z-index: 20;
   padding: 0.75rem 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(18, 26, 42, 0.55);
@@ -64,10 +66,17 @@
   backdrop-filter: blur(12px);
   border-radius: 14px;
   padding: 0.35rem 0.75rem;
+  position: relative;
+  z-index: 30;
+  overflow: visible;
 }
 
 :host ::ng-deep .layout-menubar .p-menubar-root-list {
   gap: 0.25rem;
+}
+
+:host ::ng-deep .layout-menubar.p-menubar-mobile-active .p-menubar-root-list {
+  z-index: 40;
 }
 
 :host ::ng-deep .layout-menubar .p-menuitem-link {

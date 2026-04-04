@@ -32,11 +32,13 @@ interface MissionDetailResponse {
     totalInvoiced: number;
     currency: string;
   };
+  expectedDuration: number;
   period: {
     startDate: string;
     endDate: string;
     progressPercent: number;
   };
+  internalNotes?: string | null;
   invoices: {
     id: number;
     number: string;
@@ -47,15 +49,16 @@ interface MissionDetailResponse {
 
 interface MissionRequest {
   title: string;
-  clientName: string;
-  clientContactEmail?: string | null;
+  clientId: number;
   dailyRate: number;
   expectedDuration: number;
+  totalBudgetEstimated?: number | null;
   billingType: string;
   internalNotes?: string | null;
   status: MissionStatus;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
+  currency: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -121,11 +124,13 @@ export class MissionService {
       currency: mission.financials.currency,
       totalBudgetEstimated: mission.financials.totalBudget,
       totalInvoiced: mission.financials.totalInvoiced,
+      expectedDuration: mission.expectedDuration,
       status: mission.status,
       startDate: new Date(mission.period.startDate),
       endDate: new Date(mission.period.endDate),
       timeProgressPercent: mission.period.progressPercent,
-      invoiceIds: mission.invoices?.map((invoice) => invoice.id) ?? null
+      invoiceIds: mission.invoices?.map((invoice) => invoice.id) ?? null,
+      internalNotes: mission.internalNotes ?? null
     };
   }
 

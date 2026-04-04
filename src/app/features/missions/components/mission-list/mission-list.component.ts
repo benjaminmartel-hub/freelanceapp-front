@@ -60,7 +60,8 @@ export class MissionListComponent {
   readonly statusOptions = [
     { label: 'Prospect', value: 'PROSPECT' as Mission['status'] },
     { label: 'En cours', value: 'ONGOING' as Mission['status'] },
-    { label: 'Terminee', value: 'FINISHED' as Mission['status'] }
+    { label: 'Terminee', value: 'FINISHED' as Mission['status'] },
+    { label: 'Annulee', value: 'CANCELLED' as Mission['status'] }
   ];
   readonly contextMenuItems: MenuItem[] = [
     {

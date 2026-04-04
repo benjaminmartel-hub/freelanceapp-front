@@ -1,4 +1,5 @@
 import { TitleCasePipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -57,6 +58,11 @@ export class LoginPageComponent {
           this.toastService.success('Connexion reussie.');
           const redirectUrl = this.route.snapshot.queryParamMap.get('redirectUrl') ?? '/dashboard';
           void this.router.navigateByUrl(redirectUrl);
+        },
+        error: (error: unknown) => {
+          if (error instanceof HttpErrorResponse && (error.status === 401 || error.status === 403)) {
+            this.toastService.error('Connexion refusee.');
+          }
         }
       });
   }

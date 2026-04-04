@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { NgIf } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
@@ -5,8 +6,10 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DialogModule } from 'primeng/dialog';
 import { MessageModule } from 'primeng/message';
-import { catchError, finalize, of } from 'rxjs';
+import { catchError, finalize, map, of, switchMap } from 'rxjs';
+import { Client } from '../../../../core/models/client.model';
 import { Mission } from '../../../../core/models/mission.model';
+import { ClientService } from '../../../../core/services/client.service';
 import { MissionService } from '../../../../core/services/mission.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { ClickOutsideDirective } from '../../../../shared/directives/click-outside.directive';
@@ -31,6 +34,7 @@ type MissionRequest = Parameters<MissionService['createMission']>[0];
   styleUrl: './missions.page.scss'
 })
 export class MissionFeatureComponent {
+  private readonly clientService = inject(ClientService);
   private readonly missionService = inject(MissionService);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
@@ -38,33 +42,30 @@ export class MissionFeatureComponent {
   protected readonly isLoading = signal(true);
   protected readonly error = signal<string | null>(null);
   protected readonly missions = signal<Mission[]>([]);
+  protected readonly clients = signal<Client[]>([]);
   protected readonly dialogVisible = signal(false);
   protected readonly editingMission = signal<Mission | null>(null);
   protected readonly isSaving = signal(false);
   protected readonly clickOutsideEnabled = signal(false);
+  protected readonly formKey = signal(0);
 
   private buildMissionRequest(payload: Mission): MissionRequest | null {
-    if (!payload.startDate || !payload.endDate) {
-      this.toastService.error('Les dates de debut et fin sont obligatoires.');
-      return null;
-    }
-
-    if (!payload.title?.trim()) {
-      this.toastService.error('Le titre de la mission est obligatoire.');
+    if (!this.isMissionPayloadValid(payload)) {
       return null;
     }
 
     return {
       title: payload.title,
-      clientName: payload.clientName,
-      clientContactEmail: payload.clientContactEmail ?? null,
+      clientId: payload.clientId,
       dailyRate: payload.dailyRate,
-      expectedDuration: payload.expectedDuration ?? 0,
+      expectedDuration: payload.expectedDuration,
+      totalBudgetEstimated: payload.dailyRate * payload.expectedDuration,
       billingType: payload.billingType ?? 'TJM',
       internalNotes: payload.internalNotes ?? null,
       status: payload.status,
-      startDate: payload.startDate,
-      endDate: payload.endDate
+      startDate: this.formatDate(payload.startDate),
+      endDate: this.formatDate(payload.endDate),
+      currency: payload.currency
     };
   }
 
@@ -80,7 +81,8 @@ export class MissionFeatureComponent {
       .getMissions()
       .pipe(
         finalize(() => this.isLoading.set(false)),
-        catchError(() => {
+        catchError((error: unknown) => {
+          this.notifyServerError(error, 'Impossible de charger les missions.');
           this.error.set('Impossible de charger les missions.');
           return of([] as Mission[]);
         })
@@ -89,27 +91,30 @@ export class MissionFeatureComponent {
   }
 
   protected openCreateDialog(): void {
+    this.formKey.update((value) => value + 1);
     this.editingMission.set(null);
+    this.loadClients();
     this.dialogVisible.set(true);
     this.clickOutsideEnabled.set(false);
     setTimeout(() => this.clickOutsideEnabled.set(true));
   }
 
   protected openEditDialog(mission: Mission): void {
+    this.formKey.update((value) => value + 1);
     this.dialogVisible.set(true);
     this.editingMission.set(null);
+    this.loadClients();
     this.clickOutsideEnabled.set(false);
     setTimeout(() => this.clickOutsideEnabled.set(true));
     if (mission.id == null) {
-      this.toastService.error("Identifiant mission manquant pour la mise a jour.");
       return;
     }
 
     this.missionService
       .getMission(mission.id)
       .pipe(
-        catchError(() => {
-          this.toastService.error('Impossible de charger la mission.');
+        catchError((error: unknown) => {
+          this.notifyServerError(error, 'Impossible de charger la mission.');
           return of(null);
         })
       )
@@ -118,6 +123,18 @@ export class MissionFeatureComponent {
           this.editingMission.set(detail);
         }
       });
+  }
+
+  protected loadClients(): void {
+    this.clientService
+      .getClients()
+      .pipe(
+        catchError((error: unknown) => {
+          this.notifyServerError(error, 'Impossible de charger les clients.');
+          return of([] as Client[]);
+        })
+      )
+      .subscribe((clients) => this.clients.set(clients));
   }
 
   protected closeDialog(): void {
@@ -129,28 +146,44 @@ export class MissionFeatureComponent {
   protected saveMission(payload: Mission): void {
     this.isSaving.set(true);
     const editing = this.editingMission();
-    const requestPayload = this.buildMissionRequest(payload);
-    if (!requestPayload) {
-      this.isSaving.set(false);
-      return;
-    }
-    let request$;
-    if (editing) {
-      if (editing.id == null) {
-        this.isSaving.set(false);
-        this.toastService.error("Identifiant mission manquant pour la mise a jour.");
-        return;
-      }
-      request$ = this.missionService.updateMission(editing.id, requestPayload);
-    } else {
-      request$ = this.missionService.createMission(requestPayload);
-    }
+    const clientId$ = payload.clientId
+      ? of(payload.clientId)
+      : this.clientService
+          .createClient({
+            name: payload.clientName,
+            contactEmail: payload.clientContactEmail ?? null
+          })
+          .pipe(map((client) => client.id));
 
-    request$
+    clientId$
       .pipe(
+        switchMap((clientId) => {
+          const requestPayload = this.buildMissionRequest({
+            ...payload,
+            clientId
+          });
+          if (!requestPayload) {
+            return of(null);
+          }
+
+          if (editing) {
+            if (editing.id == null) {
+              return of(null);
+            }
+            return this.missionService.updateMission(editing.id, requestPayload);
+          }
+
+          return this.missionService.createMission(requestPayload);
+        }),
         finalize(() => this.isSaving.set(false)),
-        catchError(() => {
-          this.toastService.error("Impossible d'enregistrer la mission.");
+        catchError((error: unknown) => {
+          if (error instanceof HttpErrorResponse && error.status === 409) {
+            this.toastService.error(
+              "Impossible d'enregistrer la mission : une mission est deja en cours sur cette periode"
+            );
+          } else {
+            this.notifyServerError(error, "Impossible d'enregistrer la mission.");
+          }
           return of(null);
         })
       )
@@ -169,6 +202,43 @@ export class MissionFeatureComponent {
         this.toastService.success('Mission enregistree avec succes.');
         this.closeDialog();
       });
+  }
+
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  private isMissionPayloadValid(
+    payload: Mission
+  ): payload is Mission & {
+    startDate: Date;
+    endDate: Date;
+    title: string;
+    clientId: number;
+    dailyRate: number;
+    expectedDuration: number;
+    currency: string;
+  } {
+    return (
+      payload.startDate != null &&
+      payload.endDate != null &&
+      Boolean(payload.title?.trim()) &&
+      payload.clientId != null &&
+      typeof payload.dailyRate === 'number' &&
+      payload.dailyRate > 0 &&
+      typeof payload.expectedDuration === 'number' &&
+      payload.expectedDuration > 0 &&
+      Boolean(payload.currency?.trim())
+    );
+  }
+
+  private notifyServerError(error: unknown, message: string): void {
+    if (error instanceof HttpErrorResponse && (error.status === 500 || error.status === 403)) {
+      this.toastService.error(message);
+    }
   }
 
   protected viewMission(mission: Mission): void {

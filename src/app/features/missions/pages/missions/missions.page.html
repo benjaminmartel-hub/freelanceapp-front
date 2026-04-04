@@ -38,6 +38,8 @@
 >
   <app-mission-form
     [mission]="editingMission()"
+    [formKey]="formKey()"
+    [clients]="clients()"
     [isSaving]="isSaving()"
     [submitLabel]="editingMission() ? 'Mettre a jour' : 'Creer'"
     (save)="saveMission($event)"

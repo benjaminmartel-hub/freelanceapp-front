@@ -21,7 +21,7 @@
 }
 
 .mission-form__error {
-  color: var(--red-500);
+  color: var(--red-500, #ef4444) !important;
 }
 
 .mission-form__actions {

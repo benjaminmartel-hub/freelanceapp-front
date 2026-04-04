@@ -1,4 +1,4 @@
-export type MissionStatus = 'ONGOING' | 'PROSPECT' | 'FINISHED';
+export type MissionStatus = 'ONGOING' | 'PROSPECT' | 'FINISHED' | 'CANCELLED';
 
 export interface Mission {
   id?: number;
