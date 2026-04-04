@@ -1,0 +1,48 @@
+<div class="missions-page">
+  <p-card class="missions-page__header">
+    <ng-template pTemplate="header">
+      <div class="missions-page__header-row">
+        <div class="missions-page__title">
+          <h2>Missions</h2>
+          <p>Gestion du cycle de vie des missions.</p>
+        </div>
+        <button pButton type="button" label="Nouvelle mission" icon="pi pi-plus" (click)="openCreateDialog()"></button>
+      </div>
+    </ng-template>
+  </p-card>
+
+  <p-message *ngIf="error() as errorText" severity="error" [text]="errorText"></p-message>
+
+  <p-card class="missions-page__panel">
+    <app-mission-list
+      [missions]="missions()"
+      [loading]="isLoading()"
+      (edit)="openEditDialog($event)"
+      (view)="viewMission($event)"
+    ></app-mission-list>
+  </p-card>
+</div>
+
+<p-dialog
+  styleClass="mission-dialog"
+  appClickOutside
+  [appClickOutsideEnabled]="clickOutsideEnabled()"
+  [appClickOutsideInsideSelector]="'.mission-dialog'"
+  [visible]="dialogVisible()"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: 'min(720px, 95vw)' }"
+  (onHide)="closeDialog()"
+  [header]="editingMission() ? 'Editer une mission' : 'Nouvelle mission'"
+>
+  <app-mission-form
+    [mission]="editingMission()"
+    [formKey]="formKey()"
+    [clients]="clients()"
+    [isSaving]="isSaving()"
+    [submitLabel]="editingMission() ? 'Mettre a jour' : 'Creer'"
+    (save)="saveMission($event)"
+    (cancel)="closeDialog()"
+  ></app-mission-form>
+</p-dialog>

@@ -1,0 +1,29 @@
+.mission-list__toolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+:host ::ng-deep .mission-list__search {
+  width: min(320px, 100%);
+}
+
+:host ::ng-deep .mission-list__filters .p-column-filter {
+  width: 100%;
+}
+
+:host ::ng-deep .mission-list__filters .p-inputtext,
+:host ::ng-deep .mission-list__filters .p-select {
+  width: 100%;
+}
+
+.mission-list__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.mission-list__empty {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--text-color-secondary);
+}

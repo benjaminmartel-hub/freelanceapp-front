@@ -1,9 +1,14 @@
 import { Routes } from '@angular/router';
-import { MissionsPageComponent } from './pages/missions/missions.page';
+import { MissionDetailPageComponent } from './pages/mission-detail/mission-detail.page';
+import { MissionFeatureComponent } from './pages/missions/missions.page';
 
 export const MISSIONS_ROUTES: Routes = [
   {
     path: '',
-    component: MissionsPageComponent
+    component: MissionFeatureComponent
+  },
+  {
+    path: ':id',
+    component: MissionDetailPageComponent
   }
 ];

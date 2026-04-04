@@ -1,0 +1,238 @@
+<form [formGroup]="missionForm" class="mission-form" (ngSubmit)="onSubmit()">
+  <div class="mission-form__grid">
+    <div class="mission-form__field">
+      <label for="title">Titre mission</label>
+      <input id="title" pInputText formControlName="title" placeholder="Refonte e-commerce" />
+      <small
+        *ngIf="missionForm.controls.title.invalid && (missionForm.controls.title.touched || missionForm.controls.title.dirty)"
+        class="mission-form__error"
+      >
+        Le titre est obligatoire.
+      </small>
+    </div>
+
+    <div class="mission-form__field">
+      <label for="clientName">Client</label>
+      <p-select
+        id="clientName"
+        [ngModel]="missionForm.controls.clientName.value"
+        (ngModelChange)="onClientNameInput($event)"
+        [ngModelOptions]="{ standalone: true }"
+        [options]="clients()"
+        optionLabel="name"
+        optionValue="name"
+        [editable]="true"
+        [filter]="true"
+        filterBy="name"
+        placeholder="Rechercher ou saisir un client"
+        appendTo="self"
+        (onBlur)="missionForm.controls.clientName.markAsTouched()"
+      ></p-select>
+      <small
+        *ngIf="
+          missionForm.controls.clientName.invalid &&
+          (missionForm.controls.clientName.touched || missionForm.controls.clientName.dirty)
+        "
+        class="mission-form__error"
+      >
+        Le client est obligatoire.
+      </small>
+    </div>
+
+    <div class="mission-form__field">
+      <label for="clientContactEmail">Email client</label>
+      <input
+        id="clientContactEmail"
+        pInputText
+        type="email"
+        formControlName="clientContactEmail"
+        placeholder="contact@client.com"
+      />
+      <small
+        *ngIf="
+          missionForm.controls.clientContactEmail.invalid &&
+          (missionForm.controls.clientContactEmail.touched || missionForm.controls.clientContactEmail.dirty)
+        "
+        class="mission-form__error"
+      >
+        Email client invalide.
+      </small>
+    </div>
+
+    <div class="mission-form__field">
+      <label for="dailyRate">Taux journalier</label>
+      <p-inputNumber
+        id="dailyRate"
+        formControlName="dailyRate"
+        mode="currency"
+        currency="EUR"
+        locale="fr-FR"
+      ></p-inputNumber>
+      <small
+        *ngIf="
+          missionForm.controls.dailyRate.invalid &&
+          (missionForm.controls.dailyRate.touched || missionForm.controls.dailyRate.dirty)
+        "
+        class="mission-form__error"
+      >
+        <ng-container *ngIf="missionForm.controls.dailyRate.hasError('required')">
+          Le taux journalier est obligatoire.
+        </ng-container>
+        <ng-container *ngIf="missionForm.controls.dailyRate.hasError('min')">
+          Le taux journalier doit etre positif.
+        </ng-container>
+      </small>
+    </div>
+
+    <div class="mission-form__field">
+      <label for="expectedDuration">Duree (jours)</label>
+      <p-inputNumber id="expectedDuration" formControlName="expectedDuration"></p-inputNumber>
+      <small
+        *ngIf="
+          missionForm.controls.expectedDuration.invalid &&
+          (missionForm.controls.expectedDuration.touched || missionForm.controls.expectedDuration.dirty)
+        "
+        class="mission-form__error"
+      >
+        <ng-container *ngIf="missionForm.controls.expectedDuration.hasError('required')">
+          La duree attendue est obligatoire.
+        </ng-container>
+        <ng-container *ngIf="missionForm.controls.expectedDuration.hasError('min')">
+          La duree attendue doit etre positive.
+        </ng-container>
+      </small>
+    </div>
+
+    <div class="mission-form__field">
+      <label for="billingType">Mode de facturation</label>
+      <p-select
+        id="billingType"
+        [ngModel]="missionForm.controls.billingType.value"
+        (ngModelChange)="onBillingTypeInput($event)"
+        [ngModelOptions]="{ standalone: true }"
+        [options]="billingTypeOptions"
+        optionLabel="label"
+        optionValue="value"
+        appendTo="self"
+        (onBlur)="missionForm.controls.billingType.markAsTouched()"
+      ></p-select>
+      <small
+        *ngIf="
+          missionForm.controls.billingType.invalid &&
+          (missionForm.controls.billingType.touched || missionForm.controls.billingType.dirty)
+        "
+        class="mission-form__error"
+      >
+        Le mode de facturation est obligatoire.
+      </small>
+    </div>
+
+    <div class="mission-form__field">
+      <label for="status">Statut</label>
+      <p-select
+        id="status"
+        [ngModel]="missionForm.controls.status.value"
+        (ngModelChange)="onStatusInput($event)"
+        [ngModelOptions]="{ standalone: true }"
+        [options]="statusOptions"
+        optionLabel="label"
+        optionValue="value"
+        appendTo="self"
+        (onBlur)="missionForm.controls.status.markAsTouched()"
+      ></p-select>
+      <small
+        *ngIf="
+          missionForm.controls.status.invalid &&
+          (missionForm.controls.status.touched || missionForm.controls.status.dirty)
+        "
+        class="mission-form__error"
+      >
+        Le statut est obligatoire.
+      </small>
+    </div>
+
+    <div class="mission-form__field">
+      <label for="startDate">Debut</label>
+      <p-datepicker
+        id="startDate"
+        formControlName="startDate"
+        [showIcon]="true"
+        appendTo="self"
+        dateFormat="dd/mm/yy"
+      ></p-datepicker>
+      <small
+        *ngIf="
+          missionForm.controls.startDate.invalid &&
+          (missionForm.controls.startDate.touched || missionForm.controls.startDate.dirty)
+        "
+        class="mission-form__error"
+      >
+        La date de debut est obligatoire.
+      </small>
+    </div>
+
+    <div class="mission-form__field">
+      <label for="endDate">Fin</label>
+      <p-datepicker
+        id="endDate"
+        formControlName="endDate"
+        [showIcon]="true"
+        appendTo="self"
+        dateFormat="dd/mm/yy"
+      ></p-datepicker>
+      <small
+        *ngIf="
+          missionForm.controls.endDate.invalid &&
+          (missionForm.controls.endDate.touched || missionForm.controls.endDate.dirty)
+        "
+        class="mission-form__error"
+      >
+        La date de fin est obligatoire.
+      </small>
+    </div>
+
+    <div class="mission-form__field">
+      <label>Budget estime</label>
+      <div class="mission-form__readonly">
+        {{ totalBudgetEstimate() | number: '1.0-0' }} &euro;
+      </div>
+    </div>
+
+    <div class="mission-form__field mission-form__field--full">
+      <label for="internalNotes">Notes internes</label>
+      <textarea
+        id="internalNotes"
+        pInputTextarea
+        formControlName="internalNotes"
+        rows="4"
+        placeholder="Points de suivi, risques, attentes..."
+      ></textarea>
+      <small
+        *ngIf="
+          missionForm.controls.internalNotes.invalid &&
+          (missionForm.controls.internalNotes.touched || missionForm.controls.internalNotes.dirty)
+        "
+        class="mission-form__error"
+      >
+        Les notes internes sont invalides.
+      </small>
+    </div>
+  </div>
+
+  <div class="mission-form__actions">
+    <button pButton type="button" label="Annuler" class="p-button-text" (click)="cancel.emit()"></button>
+    <span
+      [pTooltip]="'Veuillez remplir les champs obligatoires.'"
+      [tooltipDisabled]="!missionForm.invalid"
+      tooltipPosition="top"
+    >
+      <button
+        pButton
+        type="submit"
+        [label]="submitLabel()"
+        [loading]="isSaving()"
+        [disabled]="missionForm.invalid"
+      ></button>
+    </span>
+  </div>
+</form>

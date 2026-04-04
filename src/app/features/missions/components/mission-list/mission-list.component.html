@@ -1,0 +1,115 @@
+<p-contextMenu #cm [model]="contextMenuItems" (onHide)="onContextMenuSelect(null)" appendTo="body"></p-contextMenu>
+
+<p-table
+  #table
+  [value]="missions()"
+  [columns]="columns"
+  dataKey="id"
+  [paginator]="true"
+  [rows]="8"
+  [rowsPerPageOptions]="[8, 16, 24]"
+  [rowHover]="true"
+  [loading]="loading()"
+  [globalFilterFields]="globalFilterFields"
+  filterDisplay="row"
+  [contextMenu]="cm"
+  selectionMode="single"
+  [(contextMenuSelection)]="selectedMission"
+  (onContextMenuSelect)="onContextMenuSelect($event.data)"
+>
+  <ng-template pTemplate="caption">
+    <div class="mission-list__toolbar">
+      <input
+        pInputText
+        class="mission-list__search"
+        type="text"
+        placeholder="Rechercher une mission"
+        (input)="table.filterGlobal($any($event.target).value, 'contains')"
+      />
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="header">
+    <tr>
+      <th *ngFor="let column of columns" [pSortableColumn]="column.field">
+        {{ column.header }}
+        <p-sortIcon [field]="column.field"></p-sortIcon>
+      </th>
+    </tr>
+    <tr class="mission-list__filters">
+      <th *ngFor="let column of columns" [ngSwitch]="column.type">
+        <ng-container *ngSwitchCase="'status'">
+          <p-columnFilter field="status" matchMode="equals" [showMenu]="false">
+            <ng-template #filter let-value let-filter="filterCallback">
+              <p-select
+                [ngModel]="value"
+                [options]="statusOptions"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Tous"
+                [showClear]="true"
+                (onChange)="filter($event.value)"
+              ></p-select>
+            </ng-template>
+          </p-columnFilter>
+        </ng-container>
+        <ng-container *ngSwitchCase="'money'"></ng-container>
+        <ng-container *ngSwitchCase="'progress'"></ng-container>
+        <ng-container *ngSwitchCase="'date'"></ng-container>
+        <ng-container *ngSwitchDefault>
+          <p-columnFilter
+            type="text"
+            [field]="column.field"
+            matchMode="contains"
+            placeholder="Filtrer"
+            [showMenu]="false"
+            [showMatchModes]="false"
+            [showOperator]="false"
+            [showClearButton]="false"
+          ></p-columnFilter>
+        </ng-container>
+      </th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-mission let-columns="columns">
+    <tr [pContextMenuRow]="mission">
+      <td *ngFor="let column of columns" [ngSwitch]="column.type">
+        <ng-container *ngSwitchCase="'text'">
+          {{ getFieldValue(mission, column.field) }}
+        </ng-container>
+        <ng-container *ngSwitchCase="'status'">
+          <p-tag [value]="statusLabel(mission.status)" [severity]="statusSeverity(mission.status)"></p-tag>
+        </ng-container>
+        <ng-container *ngSwitchCase="'money'">
+          {{ mission.dailyRate | number: '1.0-0' }} &euro;
+        </ng-container>
+        <ng-container *ngSwitchCase="'progress'">
+          <p-progressBar [value]="mission.timeProgressPercent ?? 0" [showValue]="true"></p-progressBar>
+        </ng-container>
+        <ng-container *ngSwitchCase="'date'">
+          {{ formatDate(mission.endDate) }}
+        </ng-container>
+        <ng-container *ngSwitchDefault>
+          {{ getFieldValue(mission, column.field) }}
+        </ng-container>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="loadingbody" let-columns="columns">
+    <tr *ngFor="let row of skeletonRows">
+      <td *ngFor="let column of columns">
+        <p-skeleton height="1rem"></p-skeleton>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td [attr.colspan]="columns.length">
+        <div class="mission-list__empty">Aucune mission ne correspond a vos filtres.</div>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

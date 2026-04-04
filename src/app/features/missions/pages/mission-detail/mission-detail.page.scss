@@ -1,0 +1,73 @@
+.mission-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+:host ::ng-deep .mission-detail .p-card .p-card-header {
+  padding: 1.25rem 1.25rem 0;
+}
+
+:host ::ng-deep .mission-detail .p-card .p-card-body {
+  padding: 1.25rem;
+}
+
+:host ::ng-deep .mission-detail .p-card .p-card-content {
+  padding: 0;
+}
+
+.mission-detail__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.mission-detail__loading {
+  display: grid;
+  gap: 1rem;
+}
+
+.mission-detail__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.mission-detail__header h2 {
+  margin: 0;
+}
+
+.mission-detail__header p {
+  margin: 0.25rem 0 0;
+  color: var(--text-color-secondary);
+}
+
+.mission-detail__grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.mission-detail__grid span {
+  display: block;
+  color: var(--text-color-secondary);
+}
+
+.mission-detail__description {
+  margin-top: 1rem;
+  color: var(--text-color-secondary);
+}
+
+.mission-detail__kpis {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.mission-detail__kpi-label {
+  margin-top: 0.75rem;
+  color: var(--text-color-secondary);
+}
