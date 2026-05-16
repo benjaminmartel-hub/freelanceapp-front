@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ConfigService {
-  readonly apiBaseUrl = 'http://localhost:8080';
+  readonly apiBaseUrl = environment.apiUrl;
 }
