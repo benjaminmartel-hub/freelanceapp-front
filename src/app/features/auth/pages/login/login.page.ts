@@ -1,6 +1,6 @@
 import { TitleCasePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -18,7 +18,7 @@ import { ToastService } from '../../../../core/services/toast.service';
   templateUrl: './login.page.html',
   styleUrl: './login.page.scss'
 })
-export class LoginPageComponent {
+export class LoginPageComponent implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);
@@ -40,6 +40,10 @@ export class LoginPageComponent {
       this.toastService.success('Connexion OAuth reussie.');
       void this.router.navigateByUrl(redirectUrl);
     }
+  }
+
+  ngOnInit(): void {
+    this.authService.warmUpBackend().subscribe({ error: () => undefined });
   }
 
   protected submit(): void {
