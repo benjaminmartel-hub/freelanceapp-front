@@ -1,6 +1,6 @@
 import { TitleCasePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -18,14 +18,17 @@ import { ToastService } from '../../../../core/services/toast.service';
   templateUrl: './login.page.html',
   styleUrl: './login.page.scss'
 })
-export class LoginPageComponent {
+export class LoginPageComponent implements OnInit, OnDestroy {
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private slowLoginTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   protected readonly isLoading = signal(false);
+  protected readonly isSlowLogin = signal(false);
+  protected readonly loginButtonLabel = computed(() => (this.isLoading() ? 'Connexion en cours...' : 'Se connecter'));
   protected readonly oauthProviders = this.authService.getOauthProviders();
   protected readonly form = this.formBuilder.nonNullable.group({
     username: ['', [Validators.required]],
@@ -42,17 +45,30 @@ export class LoginPageComponent {
     }
   }
 
+  ngOnInit(): void {
+    this.authService.warmUpBackend().subscribe({ error: () => undefined });
+  }
+
+  ngOnDestroy(): void {
+    this.clearSlowLoginTimer();
+  }
+
   protected submit(): void {
+    if (this.isLoading()) {
+      return;
+    }
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    this.isLoading.set(true);
+    const credentials = this.form.getRawValue();
+    this.startLoadingState();
 
     this.authService
-      .loginWithPassword(this.form.getRawValue())
-      .pipe(finalize(() => this.isLoading.set(false)))
+      .loginWithPassword(credentials)
+      .pipe(finalize(() => this.stopLoadingState()))
       .subscribe({
         next: () => {
           this.toastService.success('Connexion reussie.');
@@ -68,6 +84,10 @@ export class LoginPageComponent {
   }
 
   protected loginWithOauth(provider: string): void {
+    if (this.isLoading()) {
+      return;
+    }
+
     this.authService.loginWithOauth(provider);
   }
 
@@ -83,5 +103,28 @@ export class LoginPageComponent {
   protected hasError(controlName: 'username' | 'password', errorCode: string): boolean {
     const control = this.form.controls[controlName];
     return control.touched && control.hasError(errorCode);
+  }
+
+  private startLoadingState(): void {
+    this.isLoading.set(true);
+    this.isSlowLogin.set(false);
+    this.form.disable({ emitEvent: false });
+    this.slowLoginTimeoutId = setTimeout(() => this.isSlowLogin.set(true), 4000);
+  }
+
+  private stopLoadingState(): void {
+    this.clearSlowLoginTimer();
+    this.isSlowLogin.set(false);
+    this.isLoading.set(false);
+    this.form.enable({ emitEvent: false });
+  }
+
+  private clearSlowLoginTimer(): void {
+    if (this.slowLoginTimeoutId === null) {
+      return;
+    }
+
+    clearTimeout(this.slowLoginTimeoutId);
+    this.slowLoginTimeoutId = null;
   }
 }

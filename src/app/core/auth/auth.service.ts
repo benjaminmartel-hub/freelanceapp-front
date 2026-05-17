@@ -65,6 +65,10 @@ export class AuthService {
       );
   }
 
+  warmUpBackend(): Observable<unknown> {
+    return this.http.get(`${this.apiUrl}/actuator/health`);
+  }
+
   registerWithPassword(payload: RegisterRequest): Observable<AuthTokenResponse> {
     return this.http
       .post<AuthTokenResponse | { data?: AuthTokenResponse }>(`${this.authApiUrl}/register`, payload)
