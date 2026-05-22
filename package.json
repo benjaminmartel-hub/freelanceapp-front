@@ -1,6 +1,6 @@
 {
   "name": "freelanceapp-front",
-  "version": "0.4.1",
+  "version": "0.5.0-SNAPSHOT",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

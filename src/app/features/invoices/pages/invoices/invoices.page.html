@@ -1,0 +1,63 @@
+<section class="invoices-page">
+  <p-card class="invoices-page__header">
+    <ng-template pTemplate="header">
+      <div class="invoices-page__header-row">
+        <div class="invoices-page__title">
+          <h2>Factures</h2>
+          <p>Pilotage des paiements, encours et retards.</p>
+        </div>
+      </div>
+    </ng-template>
+  </p-card>
+
+  <p-message *ngIf="error() as errorText" severity="error" [text]="errorText"></p-message>
+
+  <ng-container *ngIf="!isLoading(); else loadingKpis">
+    <div class="invoices-page__kpis">
+      <p-card
+        *ngFor="let kpi of kpiCards(stats())"
+        class="invoice-kpi"
+        [styleClass]="'invoice-kpi--' + kpi.tone"
+      >
+        <ng-template pTemplate="content">
+          <div class="invoice-kpi__content">
+            <div class="invoice-kpi__icon">
+              <i [class]="kpi.icon"></i>
+            </div>
+            <div class="invoice-kpi__meta">
+              <span class="invoice-kpi__label">{{ kpi.label }}</span>
+              <strong class="invoice-kpi__value">{{ formatCurrency(kpi.value) }}</strong>
+            </div>
+          </div>
+        </ng-template>
+      </p-card>
+    </div>
+  </ng-container>
+
+  <ng-template #loadingKpis>
+    <div class="invoices-page__kpis">
+      <p-card *ngFor="let item of skeletonKpis" class="invoice-kpi">
+        <ng-template pTemplate="content">
+          <div class="invoice-kpi__content">
+            <p-skeleton shape="circle" size="2.75rem"></p-skeleton>
+            <div class="invoice-kpi__meta">
+              <p-skeleton width="45%" height="1rem"></p-skeleton>
+              <p-skeleton width="70%" height="2rem"></p-skeleton>
+            </div>
+          </div>
+        </ng-template>
+      </p-card>
+    </div>
+  </ng-template>
+
+  <p-card class="invoices-page__panel">
+    <ng-template pTemplate="header">
+      <div class="invoices-page__panel-header">
+        <h3>Liste des factures</h3>
+        <span>{{ invoices().length }} facture(s)</span>
+      </div>
+    </ng-template>
+
+    <app-invoice-list [invoices]="invoices()" [loading]="isLoading()"></app-invoice-list>
+  </p-card>
+</section>

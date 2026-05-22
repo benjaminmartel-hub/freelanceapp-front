@@ -1,0 +1,121 @@
+.invoices-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.invoices-page__header,
+.invoices-page__panel {
+  border-radius: 1rem;
+}
+
+:host ::ng-deep .invoices-page__header .p-card-header,
+:host ::ng-deep .invoices-page__panel .p-card-header {
+  padding: 1.25rem;
+}
+
+:host ::ng-deep .invoices-page__header .p-card-body {
+  padding: 0;
+}
+
+:host ::ng-deep .invoices-page__panel .p-card-body {
+  padding: 1.25rem;
+}
+
+.invoices-page__header-row,
+.invoices-page__panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.invoices-page__title h2,
+.invoices-page__panel-header h3 {
+  margin: 0;
+}
+
+.invoices-page__title p {
+  margin: 0.25rem 0 0;
+  color: var(--text-color-secondary);
+}
+
+.invoices-page__panel-header span {
+  color: var(--app-text-muted);
+  font-size: 0.9rem;
+}
+
+.invoices-page__kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.invoice-kpi {
+  height: 100%;
+}
+
+:host ::ng-deep .invoice-kpi .p-card-body {
+  height: 100%;
+}
+
+.invoice-kpi__content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.invoice-kpi__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+}
+
+.invoice-kpi__meta {
+  min-width: 0;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.invoice-kpi__label {
+  color: var(--app-text-muted);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.invoice-kpi__value {
+  color: var(--app-text);
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+:host ::ng-deep .invoice-kpi--paid .invoice-kpi__icon {
+  background: rgba(54, 211, 153, 0.16);
+  color: #7af0bd;
+}
+
+:host ::ng-deep .invoice-kpi--pending .invoice-kpi__icon {
+  background: rgba(124, 179, 255, 0.16);
+  color: var(--app-primary);
+}
+
+:host ::ng-deep .invoice-kpi--overdue .invoice-kpi__icon {
+  background: rgba(255, 141, 141, 0.16);
+  color: var(--app-danger);
+}
+
+@media (max-width: 640px) {
+  .invoices-page__header-row,
+  .invoices-page__panel-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
