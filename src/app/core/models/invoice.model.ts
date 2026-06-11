@@ -35,6 +35,17 @@ export interface InvoiceStatsResponse {
   totalOverdue: number;
 }
 
+export interface InvoiceCreateRequest {
+  missionId: number;
+  issueDate: string;
+  dueDate: string;
+  totalHt: number;
+  vatRate: number;
+  totalTtc?: number;
+}
+
+export type InvoiceUpdateRequest = InvoiceCreateRequest;
+
 export interface InvoiceDetailResponse {
   id: number;
   number: string;

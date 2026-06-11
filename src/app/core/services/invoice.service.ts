@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
+  InvoiceCreateRequest,
   InvoiceDetailResponse,
   InvoiceListResponse,
-  InvoiceStatsResponse
+  InvoiceStatsResponse,
+  InvoiceUpdateRequest
 } from '../models/invoice.model';
 import { ApiService } from './api.service';
 import { ConfigService } from './config.service';
@@ -29,5 +31,13 @@ export class InvoiceService {
 
   getInvoiceById(id: number): Observable<InvoiceDetailResponse> {
     return this.api.get<InvoiceDetailResponse>(`${this.apiUrl}/${id}`);
+  }
+
+  createInvoice(request: InvoiceCreateRequest): Observable<InvoiceDetailResponse> {
+    return this.api.post<InvoiceCreateRequest, InvoiceDetailResponse>(this.apiUrl, request);
+  }
+
+  updateInvoice(id: number, request: InvoiceUpdateRequest): Observable<InvoiceDetailResponse> {
+    return this.api.put<InvoiceUpdateRequest, InvoiceDetailResponse>(`${this.apiUrl}/${id}`, request);
   }
 }

@@ -1,6 +1,8 @@
 import { DecimalPipe, NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MenuItem } from 'primeng/api';
+import { ContextMenuModule } from 'primeng/contextmenu';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -31,6 +33,7 @@ interface InvoiceColumn {
     TagModule,
     SkeletonModule,
     InputTextModule,
+    ContextMenuModule,
     SelectModule
   ],
   templateUrl: './invoice-list.component.html',
@@ -39,6 +42,7 @@ interface InvoiceColumn {
 export class InvoiceListComponent {
   readonly invoices = input<InvoiceListResponse[]>([]);
   readonly loading = input(false);
+  readonly edit = output<InvoiceListResponse>();
 
   readonly columns: InvoiceColumn[] = [
     { field: 'number', header: 'Numero', type: 'text' },
@@ -57,6 +61,20 @@ export class InvoiceListComponent {
     { label: 'Payee', value: 'PAID' as InvoiceStatus },
     { label: 'En retard', value: 'OVERDUE' as InvoiceStatus }
   ];
+  readonly contextMenuItems: MenuItem[] = [
+    {
+      label: 'Modifier',
+      icon: 'pi pi-pencil',
+      disabled: true,
+      command: () => {
+        if (this.selectedInvoice?.status === 'DRAFT') {
+          this.edit.emit(this.selectedInvoice);
+        }
+      }
+    }
+  ];
+
+  protected selectedInvoice: InvoiceListResponse | null = null;
 
   private readonly dateFormatter = new Intl.DateTimeFormat('fr-FR', {
     day: '2-digit',
@@ -92,5 +110,10 @@ export class InvoiceListComponent {
 
   formatDate(date: string): string {
     return this.dateFormatter.format(new Date(date));
+  }
+
+  protected onContextMenuSelect(invoice: InvoiceListResponse | null): void {
+    this.selectedInvoice = invoice;
+    this.contextMenuItems[0].disabled = invoice?.status !== 'DRAFT';
   }
 }

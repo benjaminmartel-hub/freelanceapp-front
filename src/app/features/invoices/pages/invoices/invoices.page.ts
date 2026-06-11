@@ -1,11 +1,18 @@
 import { NgFor, NgIf } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
+import { DialogModule } from 'primeng/dialog';
 import { MessageModule } from 'primeng/message';
 import { SkeletonModule } from 'primeng/skeleton';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
-import { InvoiceListResponse, InvoiceStatsResponse } from '../../../../core/models/invoice.model';
+import { InvoiceCreateRequest, InvoiceDetailResponse, InvoiceListResponse, InvoiceStatsResponse } from '../../../../core/models/invoice.model';
+import { Mission } from '../../../../core/models/mission.model';
 import { InvoiceService } from '../../../../core/services/invoice.service';
+import { MissionService } from '../../../../core/services/mission.service';
+import { ToastService } from '../../../../core/services/toast.service';
+import { ClickOutsideDirective } from '../../../../shared/directives/click-outside.directive';
+import { InvoiceFormComponent } from '../../components/invoice-form/invoice-form.component';
 import { InvoiceListComponent } from '../../components/invoice-list/invoice-list.component';
 
 interface InvoiceKpiCard {
@@ -17,12 +24,25 @@ interface InvoiceKpiCard {
 
 @Component({
   selector: 'app-invoices-page',
-  imports: [NgFor, NgIf, CardModule, MessageModule, SkeletonModule, InvoiceListComponent],
+  imports: [
+    NgFor,
+    NgIf,
+    CardModule,
+    ButtonModule,
+    DialogModule,
+    MessageModule,
+    SkeletonModule,
+    ClickOutsideDirective,
+    InvoiceListComponent,
+    InvoiceFormComponent
+  ],
   templateUrl: './invoices.page.html',
   styleUrl: './invoices.page.scss'
 })
 export class InvoicesPageComponent implements OnInit {
   private readonly invoiceService = inject(InvoiceService);
+  private readonly missionService = inject(MissionService);
+  private readonly toastService = inject(ToastService);
   private readonly currencyFormatter = new Intl.NumberFormat('fr-FR', {
     style: 'currency',
     currency: 'EUR',
@@ -32,6 +52,12 @@ export class InvoicesPageComponent implements OnInit {
   protected readonly isLoading = signal(true);
   protected readonly error = signal<string | null>(null);
   protected readonly invoices = signal<InvoiceListResponse[]>([]);
+  protected readonly missions = signal<Mission[]>([]);
+  protected readonly dialogVisible = signal(false);
+  protected readonly editingInvoice = signal<InvoiceDetailResponse | null>(null);
+  protected readonly isSaving = signal(false);
+  protected readonly clickOutsideEnabled = signal(false);
+  protected readonly formKey = signal(0);
   protected readonly stats = signal<InvoiceStatsResponse>({
     totalPaid: 0,
     totalPending: 0,
@@ -70,6 +96,87 @@ export class InvoicesPageComponent implements OnInit {
         this.invoices.set(invoices);
         this.stats.set(stats);
       });
+  }
+
+  protected openCreateDialog(): void {
+    this.formKey.update((value) => value + 1);
+    this.editingInvoice.set(null);
+    this.loadMissions();
+    this.dialogVisible.set(true);
+    this.clickOutsideEnabled.set(false);
+    setTimeout(() => this.clickOutsideEnabled.set(true));
+  }
+
+  protected openEditDialog(invoice: InvoiceListResponse): void {
+    if (invoice.status !== 'DRAFT') {
+      return;
+    }
+
+    this.formKey.update((value) => value + 1);
+    this.editingInvoice.set(null);
+    this.loadMissions();
+    this.dialogVisible.set(true);
+    this.clickOutsideEnabled.set(false);
+    setTimeout(() => this.clickOutsideEnabled.set(true));
+
+    this.invoiceService
+      .getInvoiceById(invoice.id)
+      .pipe(
+        catchError(() => {
+          this.toastService.error('Impossible de charger la facture.');
+          this.closeDialog();
+          return of(null);
+        })
+      )
+      .subscribe((detail) => {
+        if (detail) {
+          this.editingInvoice.set(detail);
+        }
+      });
+  }
+
+  protected closeDialog(): void {
+    this.dialogVisible.set(false);
+    this.editingInvoice.set(null);
+    this.clickOutsideEnabled.set(false);
+  }
+
+  protected saveInvoice(request: InvoiceCreateRequest): void {
+    this.isSaving.set(true);
+    const editing = this.editingInvoice();
+    const save$ = editing
+      ? this.invoiceService.updateInvoice(editing.id, request)
+      : this.invoiceService.createInvoice(request);
+
+    save$
+      .pipe(
+        finalize(() => this.isSaving.set(false)),
+        catchError(() => {
+          this.toastService.error("Impossible d'enregistrer la facture.");
+          return of(null);
+        })
+      )
+      .subscribe((invoice) => {
+        if (!invoice) {
+          return;
+        }
+
+        this.toastService.success('Facture enregistree avec succes.');
+        this.closeDialog();
+        this.loadInvoices();
+      });
+  }
+
+  protected loadMissions(): void {
+    this.missionService
+      .getMissions()
+      .pipe(
+        catchError(() => {
+          this.toastService.error('Impossible de charger les missions.');
+          return of([] as Mission[]);
+        })
+      )
+      .subscribe((missions) => this.missions.set(missions));
   }
 
   protected kpiCards(stats: InvoiceStatsResponse): InvoiceKpiCard[] {

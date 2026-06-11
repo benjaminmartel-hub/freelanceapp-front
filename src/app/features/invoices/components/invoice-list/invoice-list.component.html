@@ -1,3 +1,5 @@
+<p-contextMenu #cm [model]="contextMenuItems" (onHide)="onContextMenuSelect(null)" appendTo="body"></p-contextMenu>
+
 <p-table
   #table
   [value]="invoices()"
@@ -10,6 +12,10 @@
   [loading]="loading()"
   [globalFilterFields]="globalFilterFields"
   filterDisplay="row"
+  [contextMenu]="cm"
+  selectionMode="single"
+  [(contextMenuSelection)]="selectedInvoice"
+  (onContextMenuSelect)="onContextMenuSelect($event.data)"
 >
   <ng-template pTemplate="caption">
     <div class="invoice-list__toolbar">
@@ -66,7 +72,7 @@
   </ng-template>
 
   <ng-template pTemplate="body" let-invoice let-columns="columns">
-    <tr>
+    <tr [pContextMenuRow]="invoice">
       <td *ngFor="let column of columns" [ngSwitch]="column.type">
         <ng-container *ngSwitchCase="'text'">
           <span class="invoice-list__primary" *ngIf="column.field === 'number'; else regularText">

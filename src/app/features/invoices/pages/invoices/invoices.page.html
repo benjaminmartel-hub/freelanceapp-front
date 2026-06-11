@@ -6,6 +6,7 @@
           <h2>Factures</h2>
           <p>Pilotage des paiements, encours et retards.</p>
         </div>
+        <button pButton type="button" label="Ajouter une facture" icon="pi pi-plus" (click)="openCreateDialog()"></button>
       </div>
     </ng-template>
   </p-card>
@@ -58,6 +59,34 @@
       </div>
     </ng-template>
 
-    <app-invoice-list [invoices]="invoices()" [loading]="isLoading()"></app-invoice-list>
+    <app-invoice-list
+      [invoices]="invoices()"
+      [loading]="isLoading()"
+      (edit)="openEditDialog($event)"
+    ></app-invoice-list>
   </p-card>
 </section>
+
+<p-dialog
+  styleClass="invoice-dialog"
+  appClickOutside
+  [appClickOutsideEnabled]="clickOutsideEnabled()"
+  [appClickOutsideInsideSelector]="'.invoice-dialog'"
+  [visible]="dialogVisible()"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: 'min(720px, 95vw)' }"
+  (onHide)="closeDialog()"
+  [header]="editingInvoice() ? 'Editer une facture' : 'Nouvelle facture'"
+>
+  <app-invoice-form
+    [invoice]="editingInvoice()"
+    [formKey]="formKey()"
+    [missions]="missions()"
+    [isSaving]="isSaving()"
+    [submitLabel]="editingInvoice() ? 'Mettre a jour' : 'Creer'"
+    (save)="saveInvoice($event)"
+    (cancel)="closeDialog()"
+  ></app-invoice-form>
+</p-dialog>
