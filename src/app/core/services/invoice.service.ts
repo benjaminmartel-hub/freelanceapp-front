@@ -40,4 +40,8 @@ export class InvoiceService {
   updateInvoice(id: number, request: InvoiceUpdateRequest): Observable<InvoiceDetailResponse> {
     return this.api.put<InvoiceUpdateRequest, InvoiceDetailResponse>(`${this.apiUrl}/${id}`, request);
   }
+
+  downloadInvoicePdf(id: number): Observable<Blob> {
+    return this.api.get(`${this.apiUrl}/${id}/download`, { responseType: 'blob' });
+  }
 }

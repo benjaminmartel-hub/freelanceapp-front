@@ -2,12 +2,14 @@ import { DecimalPipe, NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } fro
 import { Component, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MenuItem } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
 import { ContextMenuModule } from 'primeng/contextmenu';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
 import { InvoiceListResponse, InvoiceStatus } from '../../../../core/models/invoice.model';
 
 type InvoiceColumnType = 'text' | 'status' | 'money' | 'date' | 'rate';
@@ -29,12 +31,14 @@ interface InvoiceColumn {
     NgSwitchCase,
     NgSwitchDefault,
     FormsModule,
+    ButtonModule,
     TableModule,
     TagModule,
     SkeletonModule,
     InputTextModule,
     ContextMenuModule,
-    SelectModule
+    SelectModule,
+    TooltipModule
   ],
   templateUrl: './invoice-list.component.html',
   styleUrl: './invoice-list.component.scss'
@@ -42,7 +46,9 @@ interface InvoiceColumn {
 export class InvoiceListComponent {
   readonly invoices = input<InvoiceListResponse[]>([]);
   readonly loading = input(false);
+  readonly downloadingInvoiceId = input<number | null>(null);
   readonly edit = output<InvoiceListResponse>();
+  readonly download = output<InvoiceListResponse>();
 
   readonly columns: InvoiceColumn[] = [
     { field: 'number', header: 'Numero', type: 'text' },
@@ -69,6 +75,16 @@ export class InvoiceListComponent {
       command: () => {
         if (this.selectedInvoice?.status === 'DRAFT') {
           this.edit.emit(this.selectedInvoice);
+        }
+      }
+    },
+    {
+      label: 'Télécharger le PDF',
+      icon: 'pi pi-file-pdf',
+      disabled: true,
+      command: () => {
+        if (this.selectedInvoice && this.selectedInvoice.status !== 'DRAFT') {
+          this.download.emit(this.selectedInvoice);
         }
       }
     }
@@ -112,8 +128,23 @@ export class InvoiceListComponent {
     return this.dateFormatter.format(new Date(date));
   }
 
+  protected canDownload(invoice: InvoiceListResponse): boolean {
+    return invoice.status !== 'DRAFT' && this.downloadingInvoiceId() === null;
+  }
+
+  protected isDownloading(invoice: InvoiceListResponse): boolean {
+    return this.downloadingInvoiceId() === invoice.id;
+  }
+
+  protected downloadInvoice(invoice: InvoiceListResponse): void {
+    if (this.canDownload(invoice)) {
+      this.download.emit(invoice);
+    }
+  }
+
   protected onContextMenuSelect(invoice: InvoiceListResponse | null): void {
     this.selectedInvoice = invoice;
     this.contextMenuItems[0].disabled = invoice?.status !== 'DRAFT';
+    this.contextMenuItems[1].disabled = !invoice || invoice.status === 'DRAFT' || this.downloadingInvoiceId() === invoice.id;
   }
 }

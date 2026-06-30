@@ -26,6 +26,16 @@
   color: #d7f8e4;
 }
 
+.invoice-list__actions-header,
+.invoice-list__actions {
+  width: 5rem;
+  text-align: center;
+}
+
+.invoice-list__actions {
+  white-space: nowrap;
+}
+
 .invoice-list__empty {
   padding: 1.5rem;
   text-align: center;

@@ -5,7 +5,7 @@ import { CardModule } from 'primeng/card';
 import { DialogModule } from 'primeng/dialog';
 import { MessageModule } from 'primeng/message';
 import { SkeletonModule } from 'primeng/skeleton';
-import { catchError, finalize, forkJoin, of } from 'rxjs';
+import { EMPTY, catchError, finalize, forkJoin, of } from 'rxjs';
 import { InvoiceCreateRequest, InvoiceDetailResponse, InvoiceListResponse, InvoiceStatsResponse } from '../../../../core/models/invoice.model';
 import { Mission } from '../../../../core/models/mission.model';
 import { InvoiceService } from '../../../../core/services/invoice.service';
@@ -56,6 +56,7 @@ export class InvoicesPageComponent implements OnInit {
   protected readonly dialogVisible = signal(false);
   protected readonly editingInvoice = signal<InvoiceDetailResponse | null>(null);
   protected readonly isSaving = signal(false);
+  protected readonly downloadingInvoiceId = signal<number | null>(null);
   protected readonly clickOutsideEnabled = signal(false);
   protected readonly formKey = signal(0);
   protected readonly stats = signal<InvoiceStatsResponse>({
@@ -167,6 +168,27 @@ export class InvoicesPageComponent implements OnInit {
       });
   }
 
+  protected downloadInvoicePdf(invoice: InvoiceListResponse): void {
+    if (invoice.status === 'DRAFT' || this.downloadingInvoiceId() !== null) {
+      return;
+    }
+
+    this.downloadingInvoiceId.set(invoice.id);
+
+    this.invoiceService
+      .downloadInvoicePdf(invoice.id)
+      .pipe(
+        finalize(() => this.downloadingInvoiceId.set(null)),
+        catchError(() => {
+          this.toastService.error('Impossible de telecharger le PDF de la facture.');
+          return EMPTY;
+        })
+      )
+      .subscribe((pdfBlob) => {
+        this.triggerPdfDownload(pdfBlob, invoice);
+      });
+  }
+
   protected loadMissions(): void {
     this.missionService
       .getMissions()
@@ -204,5 +226,26 @@ export class InvoicesPageComponent implements OnInit {
 
   protected formatCurrency(amount: number): string {
     return this.currencyFormatter.format(amount);
+  }
+
+  private triggerPdfDownload(pdfBlob: Blob, invoice: InvoiceListResponse): void {
+    const downloadUrl = URL.createObjectURL(pdfBlob);
+    const downloadLink = document.createElement('a');
+
+    downloadLink.href = downloadUrl;
+    downloadLink.download = `${this.buildInvoicePdfFileName(invoice)}.pdf`;
+    downloadLink.style.display = 'none';
+
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    downloadLink.remove();
+    URL.revokeObjectURL(downloadUrl);
+  }
+
+  private buildInvoicePdfFileName(invoice: InvoiceListResponse): string {
+    const invoiceNumber = invoice.number.trim() || String(invoice.id);
+    const sanitizedInvoiceNumber = invoiceNumber.replace(/[^a-zA-Z0-9_-]/g, '-');
+
+    return `facture-${sanitizedInvoiceNumber}`;
   }
 }

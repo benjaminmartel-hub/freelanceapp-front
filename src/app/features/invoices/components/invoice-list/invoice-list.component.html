@@ -35,6 +35,7 @@
         {{ column.header }}
         <p-sortIcon [field]="column.field"></p-sortIcon>
       </th>
+      <th class="invoice-list__actions-header">Actions</th>
     </tr>
     <tr class="invoice-list__filters">
       <th *ngFor="let column of columns" [ngSwitch]="column.type">
@@ -68,6 +69,7 @@
           ></p-columnFilter>
         </ng-container>
       </th>
+      <th></th>
     </tr>
   </ng-template>
 
@@ -93,6 +95,22 @@
           {{ getFieldValue(invoice, column.field) }}
         </ng-container>
       </td>
+      <td class="invoice-list__actions">
+        <button
+          pButton
+          type="button"
+          icon="pi pi-file-pdf"
+          severity="secondary"
+          [text]="true"
+          [rounded]="true"
+          [loading]="isDownloading(invoice)"
+          [disabled]="!canDownload(invoice)"
+          [pTooltip]="invoice.status === 'DRAFT' ? 'PDF indisponible pour un brouillon' : 'Télécharger le PDF'"
+          tooltipPosition="left"
+          aria-label="Télécharger le PDF"
+          (click)="downloadInvoice(invoice)"
+        ></button>
+      </td>
     </tr>
   </ng-template>
 
@@ -101,12 +119,15 @@
       <td *ngFor="let column of columns">
         <p-skeleton height="1rem"></p-skeleton>
       </td>
+      <td>
+        <p-skeleton shape="circle" size="2rem"></p-skeleton>
+      </td>
     </tr>
   </ng-template>
 
   <ng-template pTemplate="emptymessage">
     <tr>
-      <td [attr.colspan]="columns.length">
+      <td [attr.colspan]="columns.length + 1">
         <div class="invoice-list__empty">Aucune facture ne correspond a vos filtres.</div>
       </td>
     </tr>

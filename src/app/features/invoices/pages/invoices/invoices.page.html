@@ -61,8 +61,10 @@
 
     <app-invoice-list
       [invoices]="invoices()"
-      [loading]="isLoading()"
+      [loading]="isLoading() || downloadingInvoiceId() !== null"
+      [downloadingInvoiceId]="downloadingInvoiceId()"
       (edit)="openEditDialog($event)"
+      (download)="downloadInvoicePdf($event)"
     ></app-invoice-list>
   </p-card>
 </section>
