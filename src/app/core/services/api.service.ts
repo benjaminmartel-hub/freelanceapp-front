@@ -2,11 +2,25 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+type ApiGetOptions = {
+  responseType?: 'json';
+};
+
+type ApiGetBlobOptions = {
+  responseType: 'blob';
+};
+
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   constructor(private readonly http: HttpClient) {}
 
-  get<T>(url: string): Observable<T> {
+  get<T>(url: string, options?: ApiGetOptions): Observable<T>;
+  get(url: string, options: ApiGetBlobOptions): Observable<Blob>;
+  get<T>(url: string, options?: ApiGetOptions | ApiGetBlobOptions): Observable<T> | Observable<Blob> {
+    if (options?.responseType === 'blob') {
+      return this.http.get(url, { responseType: 'blob' });
+    }
+
     return this.http.get<T>(url);
   }
 

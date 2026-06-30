@@ -1,0 +1,43 @@
+.invoice-list__toolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+:host ::ng-deep .invoice-list__search {
+  width: min(320px, 100%);
+}
+
+:host ::ng-deep .invoice-list__filters .p-column-filter {
+  width: 100%;
+}
+
+:host ::ng-deep .invoice-list__filters .p-inputtext,
+:host ::ng-deep .invoice-list__filters .p-select {
+  width: 100%;
+}
+
+.invoice-list__primary {
+  font-weight: 700;
+  color: var(--app-text);
+}
+
+.invoice-list__amount {
+  font-weight: 700;
+  color: #d7f8e4;
+}
+
+.invoice-list__actions-header,
+.invoice-list__actions {
+  width: 5rem;
+  text-align: center;
+}
+
+.invoice-list__actions {
+  white-space: nowrap;
+}
+
+.invoice-list__empty {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--text-color-secondary);
+}
