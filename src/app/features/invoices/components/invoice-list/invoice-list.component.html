@@ -1,0 +1,135 @@
+<p-contextMenu #cm [model]="contextMenuItems" (onHide)="onContextMenuSelect(null)" appendTo="body"></p-contextMenu>
+
+<p-table
+  #table
+  [value]="invoices()"
+  [columns]="columns"
+  dataKey="id"
+  [paginator]="true"
+  [rows]="8"
+  [rowsPerPageOptions]="[8, 16, 24]"
+  [rowHover]="true"
+  [loading]="loading()"
+  [globalFilterFields]="globalFilterFields"
+  filterDisplay="row"
+  [contextMenu]="cm"
+  selectionMode="single"
+  [(contextMenuSelection)]="selectedInvoice"
+  (onContextMenuSelect)="onContextMenuSelect($event.data)"
+>
+  <ng-template pTemplate="caption">
+    <div class="invoice-list__toolbar">
+      <input
+        pInputText
+        class="invoice-list__search"
+        type="text"
+        placeholder="Rechercher une facture"
+        (input)="table.filterGlobal($any($event.target).value, 'contains')"
+      />
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="header">
+    <tr>
+      <th *ngFor="let column of columns" [pSortableColumn]="column.field">
+        {{ column.header }}
+        <p-sortIcon [field]="column.field"></p-sortIcon>
+      </th>
+      <th class="invoice-list__actions-header">Actions</th>
+    </tr>
+    <tr class="invoice-list__filters">
+      <th *ngFor="let column of columns" [ngSwitch]="column.type">
+        <ng-container *ngSwitchCase="'status'">
+          <p-columnFilter field="status" matchMode="equals" [showMenu]="false">
+            <ng-template #filter let-value let-filter="filterCallback">
+              <p-select
+                [ngModel]="value"
+                [options]="statusOptions"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Tous"
+                [showClear]="true"
+                (onChange)="filter($event.value)"
+              ></p-select>
+            </ng-template>
+          </p-columnFilter>
+        </ng-container>
+        <ng-container *ngSwitchCase="'money'"></ng-container>
+        <ng-container *ngSwitchCase="'date'"></ng-container>
+        <ng-container *ngSwitchDefault>
+          <p-columnFilter
+            type="text"
+            [field]="column.field"
+            matchMode="contains"
+            placeholder="Filtrer"
+            [showMenu]="false"
+            [showMatchModes]="false"
+            [showOperator]="false"
+            [showClearButton]="false"
+          ></p-columnFilter>
+        </ng-container>
+      </th>
+      <th></th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-invoice let-columns="columns">
+    <tr [pContextMenuRow]="invoice">
+      <td *ngFor="let column of columns" [ngSwitch]="column.type">
+        <ng-container *ngSwitchCase="'text'">
+          <span class="invoice-list__primary" *ngIf="column.field === 'number'; else regularText">
+            {{ getFieldValue(invoice, column.field) }}
+          </span>
+          <ng-template #regularText>{{ getFieldValue(invoice, column.field) }}</ng-template>
+        </ng-container>
+        <ng-container *ngSwitchCase="'status'">
+          <p-tag [value]="statusLabel(invoice.status)" [severity]="statusSeverity(invoice.status)"></p-tag>
+        </ng-container>
+        <ng-container *ngSwitchCase="'money'">
+          <span class="invoice-list__amount">{{ invoice.totalTtc | number: '1.2-2' }} &euro;</span>
+        </ng-container>
+        <ng-container *ngSwitchCase="'date'">
+          {{ formatDate(invoice.dueDate) }}
+        </ng-container>
+        <ng-container *ngSwitchDefault>
+          {{ getFieldValue(invoice, column.field) }}
+        </ng-container>
+      </td>
+      <td class="invoice-list__actions">
+        <button
+          pButton
+          type="button"
+          icon="pi pi-file-pdf"
+          severity="secondary"
+          [text]="true"
+          [rounded]="true"
+          [loading]="isDownloading(invoice)"
+          [disabled]="!canDownload(invoice)"
+          [pTooltip]="invoice.status === 'DRAFT' ? 'PDF indisponible pour un brouillon' : 'Télécharger le PDF'"
+          tooltipPosition="left"
+          aria-label="Télécharger le PDF"
+          (click)="downloadInvoice(invoice)"
+        ></button>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="loadingbody" let-columns="columns">
+    <tr *ngFor="let row of skeletonRows">
+      <td *ngFor="let column of columns">
+        <p-skeleton height="1rem"></p-skeleton>
+      </td>
+      <td>
+        <p-skeleton shape="circle" size="2rem"></p-skeleton>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td [attr.colspan]="columns.length + 1">
+        <div class="invoice-list__empty">Aucune facture ne correspond a vos filtres.</div>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

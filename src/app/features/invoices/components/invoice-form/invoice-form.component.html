@@ -1,0 +1,130 @@
+<form [formGroup]="invoiceForm" class="invoice-form" (ngSubmit)="onSubmit()">
+  <div class="invoice-form__grid">
+    <div class="invoice-form__field invoice-form__field--full">
+      <label for="missionId">Mission</label>
+      <p-select
+        id="missionId"
+        [ngModel]="invoiceForm.controls.missionId.value"
+        (ngModelChange)="onMissionInput($event)"
+        [ngModelOptions]="{ standalone: true }"
+        [options]="missionOptions()"
+        optionLabel="label"
+        optionValue="value"
+        [filter]="true"
+        filterBy="label"
+        placeholder="Selectionner une mission"
+        appendTo="self"
+        (onBlur)="invoiceForm.controls.missionId.markAsTouched()"
+      ></p-select>
+      <small
+        *ngIf="
+          invoiceForm.controls.missionId.invalid &&
+          (invoiceForm.controls.missionId.touched || invoiceForm.controls.missionId.dirty)
+        "
+        class="invoice-form__error"
+      >
+        La mission est obligatoire.
+      </small>
+    </div>
+
+    <div class="invoice-form__field">
+      <label for="issueDate">Date d'emission</label>
+      <p-datepicker
+        id="issueDate"
+        formControlName="issueDate"
+        [showIcon]="true"
+        appendTo="self"
+        dateFormat="dd/mm/yy"
+      ></p-datepicker>
+      <small
+        *ngIf="
+          invoiceForm.controls.issueDate.invalid &&
+          (invoiceForm.controls.issueDate.touched || invoiceForm.controls.issueDate.dirty)
+        "
+        class="invoice-form__error"
+      >
+        La date d'emission est obligatoire.
+      </small>
+    </div>
+
+    <div class="invoice-form__field">
+      <label for="dueDate">Date d'echeance</label>
+      <p-datepicker
+        id="dueDate"
+        formControlName="dueDate"
+        [showIcon]="true"
+        appendTo="self"
+        dateFormat="dd/mm/yy"
+      ></p-datepicker>
+      <small
+        *ngIf="
+          invoiceForm.controls.dueDate.invalid &&
+          (invoiceForm.controls.dueDate.touched || invoiceForm.controls.dueDate.dirty)
+        "
+        class="invoice-form__error"
+      >
+        La date d'echeance est obligatoire.
+      </small>
+    </div>
+
+    <div class="invoice-form__field">
+      <label for="totalHt">Total HT</label>
+      <p-inputNumber id="totalHt" formControlName="totalHt" mode="currency" currency="EUR" locale="fr-FR"></p-inputNumber>
+      <small
+        *ngIf="
+          invoiceForm.controls.totalHt.invalid &&
+          (invoiceForm.controls.totalHt.touched || invoiceForm.controls.totalHt.dirty)
+        "
+        class="invoice-form__error"
+      >
+        <ng-container *ngIf="invoiceForm.controls.totalHt.hasError('required')">
+          Le total HT est obligatoire.
+        </ng-container>
+        <ng-container *ngIf="invoiceForm.controls.totalHt.hasError('min')">
+          Le total HT doit etre positif.
+        </ng-container>
+      </small>
+    </div>
+
+    <div class="invoice-form__field">
+      <label for="vatRate">TVA (%)</label>
+      <p-inputNumber id="vatRate" formControlName="vatRate" suffix=" %" locale="fr-FR" [minFractionDigits]="0"></p-inputNumber>
+      <small
+        *ngIf="
+          invoiceForm.controls.vatRate.invalid &&
+          (invoiceForm.controls.vatRate.touched || invoiceForm.controls.vatRate.dirty)
+        "
+        class="invoice-form__error"
+      >
+        <ng-container *ngIf="invoiceForm.controls.vatRate.hasError('required')">
+          Le taux de TVA est obligatoire.
+        </ng-container>
+        <ng-container *ngIf="invoiceForm.controls.vatRate.hasError('min')">
+          Le taux de TVA doit etre positif.
+        </ng-container>
+      </small>
+    </div>
+
+    <div class="invoice-form__field">
+      <label>Total TTC</label>
+      <div class="invoice-form__readonly">{{ totalTtc() | number: '1.2-2' }} &euro;</div>
+    </div>
+  </div>
+
+  <div class="invoice-form__actions">
+    <button pButton type="button" label="Annuler" class="p-button-text" (click)="cancel.emit()"></button>
+    <span
+      [pTooltip]="'Veuillez remplir les champs obligatoires.'"
+      [tooltipDisabled]="!invoiceForm.invalid"
+      tooltipPosition="top"
+    >
+      <button
+        pButton
+        type="submit"
+        [label]="submitLabel()"
+        [loading]="isSaving()"
+        [disabled]="invoiceForm.invalid"
+      ></button>
+    </span>
+  </div>
+</form>
